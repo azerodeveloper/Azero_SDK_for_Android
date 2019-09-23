@@ -1,0 +1,32 @@
+.gradle
+/local.properties
+.DS_Store
+/captures
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Android auto gen files
+bin/
+gen/
+default.properties
+
+#gradle/Android Studio build folders
+build/
+#gradle/
+
+#OS gen folder information
+Thumbs.db
+
+#temp files
+*.tmp
+*.temp
+*.swp
+*.vpp~*
+*.*~
+
+#eclipse config files
+.project
+.settings/

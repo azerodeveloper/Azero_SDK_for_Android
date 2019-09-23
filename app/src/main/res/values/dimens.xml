@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recommendation_title_size">30sp</dimen>
+    <dimen name="recommendation_guidelines_size">16sp</dimen>
+    <dimen name="recommendation_margin_start">24dp</dimen>
+    <dimen name="recommendation_margin_end">24dp</dimen>
+    <dimen name="recommendation_guidelines_margin_top">8dp</dimen>
+
+    <dimen name="alert_time">24sp</dimen>
+    <dimen name="alert_event">40sp</dimen>
+    <dimen name="alert_text">11sp</dimen>
+
+    <dimen name="text_size_big">18sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+</resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- log -->
+    <color name="logEntry1">#303030</color>
+    <color name="logEntry2">#424242</color>
+
+    <!-- display cards -->
+    <color name="cardMainTitle">#151320</color>
+    <color name="cardSubTitle">#a9aba9</color>
+    <color name="cardTextField">#1d232b</color>
+    <color name="cardBackground">#ffffff</color>
+    <color name="cardDivider">#e1e1e1</color>
+    <color name="cardListItemIndex">#a9aba9</color>
+    <color name="cardListItemContent">#000000</color>
+    <color name="cardHighTemp">#151320</color>
+    <color name="cardLowTemp">#a9aba9</color>
+    <color name="cblCode">#02d0f9</color>
+    <color name="cblBackground">#1d232b</color>
+    <color name="cblText">#ffffff</color>
+
+    <color name="defaultMainTitle">#ffffff</color>
+    <color name="defaultTextField">#a9aba9</color>
+
+    <!-- drawer -->
+    <color name="drawerBackground">#303030</color>
+    <color name="drawerSection">#424242</color>
+    <color name="drawerSubsection">#515151</color>
+    <color name="drawerHeader">#fff5f5</color>
+    <color name="drawerButtonText">#fff5f5</color>
+    <color name="drawerButton1">#00695c</color>
+    <color name="drawerButton2">#004d40</color>
+    <color name="drawerTextStatus">#4db6ac</color>
+
+    <!-- playback controller -->
+    <color name="playbackControllerBackground">#212121</color>
+
+    <!--snackbar-->
+    <color name="snackbar_background">#80000000</color>
+    <color name="snackbar_content">#545454</color>
+    <color name="dialogSnackbarBackground">#ffffff</color>
+    <color name="white">#ffffff</color>
+
+    <!--playerInfo-->
+    <color name="mCardBackground">#000000</color>
+    <color name="mCardMainTitle">#ffffff</color>
+    <color name="mCardSubTitle">#a9aba9</color>
+
+    <!--shadowGradient-->
+    <color name="gradientColor1">#60000000</color>
+    <color name="gradientColor2">#40000000</color>
+    <color name="gradientColor3">#60000000</color>
+    <color name="gradientColor4">#50000000</color>
+    <color name="gradientColor5">#00000000</color>
+
+    <color name="server_error">#ffc000</color>
+    <color name="network_error">#d50000</color>
+
+    <!--alerts-->
+    <color name="alerts_item_background">#75FFFFFF</color>
+    <color name="alerts_text_color">#ffffff</color>
+    <color name="alerts_line_color">#cBc7cc</color>
+    <color name="alerts_delete_red">#ff3b30</color>
+    <color name="alert_text_color">#CCFFFFFF</color>
+    <color name="alert_item_background">#000000</color>
+
+    <!--news-->
+    <color name="news_item_background">#F6F6F6</color>
+    <color name="news_text_color">#333333</color>
+    <color name="news_mask_color">#80000000</color>
+    <color name="news_dividing_line_color">#a5cfe6</color>
+</resources>

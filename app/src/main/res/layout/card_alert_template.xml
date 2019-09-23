@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/soundai_alerts_info_background"
+        android:scaleType="centerInside" />
+
+    <ImageButton
+        android:id="@+id/imageButton_back"
+        android:layout_width="15dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="24dp"
+        android:background="#00000000"
+        android:scaleType="centerInside"
+        android:src="@drawable/soundai_icon_back"
+        app:layout_constraintBottom_toTopOf="@+id/recycleView_alerts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_title"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:text="闹钟和日程提醒"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#c8c7cc"
+        app:layout_constraintTop_toBottomOf="@+id/textView_title" />
+
+    <com.azero.sampleapp.activity.alert.AlertsRecyclerView
+        android:id="@+id/recycleView_alerts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+</android.support.constraint.ConstraintLayout>

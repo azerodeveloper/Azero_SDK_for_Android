@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mCardBackground"
+    android:gravity="center_vertical">
+
+    <RelativeLayout
+        android:id="@+id/recommendation_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.azero.sampleapp.widget.GradientView
+            android:id="@+id/shadeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:id="@+id/title_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/recommendation_margin_start"
+                android:layout_marginEnd="@dimen/recommendation_margin_end"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:maxLines="2"
+                android:textColor="@color/white"
+                android:textSize="@dimen/recommendation_title_size"
+                android:textStyle="bold"
+                tools:text="垃圾分类" />
+
+            <View
+                android:layout_width="100dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#60ffffff" />
+
+            <TextView
+                android:id="@+id/subTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="@dimen/recommendation_margin_start"
+                android:layout_marginTop="@dimen/recommendation_guidelines_margin_top"
+                android:layout_marginEnd="@dimen/recommendation_margin_end"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                android:textSize="@dimen/recommendation_guidelines_size"
+                android:alpha="0.8"
+                tools:text="你是什么垃圾" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

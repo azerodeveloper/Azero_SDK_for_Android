@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardDivider">
+
+    <ImageView
+        android:id="@+id/qrcode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        app:layout_constraintLeft_toLeftOf="@+id/main_title_textView"
+        app:layout_constraintRight_toRightOf="@+id/main_title_textView"
+        app:layout_constraintTop_toBottomOf="@+id/main_title_textView"
+        app:srcCompat="@drawable/btn_drawer_default" />
+
+    <TextView
+        android:id="@+id/main_title_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="TextView"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/cardTextField"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@+id/photo_info_layout"
+        app:layout_constraintRight_toRightOf="@+id/photo_info_layout"
+        app:layout_constraintTop_toTopOf="@+id/photo_layout" />
+
+    <LinearLayout
+        android:id="@+id/photo_info_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7sp"
+        android:layout_marginRight="15sp"
+        android:layout_marginBottom="15sp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/guidelineVertical1"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/title_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/cardTextField"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/author_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="8sp"
+            android:textStyle="normal|italic" />
+
+        <TextView
+            android:id="@+id/date_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="8sp"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineTopMargin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineHorizontal1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineLeftMargin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.06" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineVertical1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/photo_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/cardSubTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/guidelineHorizontal1"
+        app:layout_constraintLeft_toLeftOf="@+id/guidelineLeftMargin"
+        app:layout_constraintRight_toRightOf="@+id/guidelineVertical1"
+        app:layout_constraintTop_toTopOf="@+id/guidelineTopMargin">
+
+
+        <ImageView
+            android:id="@+id/photo_imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
