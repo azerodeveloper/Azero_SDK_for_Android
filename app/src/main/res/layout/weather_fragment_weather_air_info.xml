@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/bg1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/weather_air_bj"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/weather_air_layout_margin_right"
+        android:layout_marginLeft="@dimen/weather_air_layout_margin_left"
+        android:layout_marginTop="@dimen/weather_air_layout_margin_top"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <com.azero.sampleapp.activity.weather.widget.SquareTextView
+                android:id="@+id/air_quality_info"
+                android:layout_width="@dimen/weather_suggest_text_view_size"
+                android:layout_height="@dimen/weather_suggest_text_view_size"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text=""
+                app:thumbColor="@color/weather_thumb_color"
+                app:trackColor="@color/weather_track_color"
+                app:thumbWidth="@dimen/weather_suggest_text_thumb_width"
+                app:trackWidth="@dimen/weather_suggest_text_track_width"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/weather_suggest_text_size"/>
+
+            <TextView
+                android:id="@+id/air_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_below="@+id/air_quality_info"
+                android:layout_centerHorizontal="true"
+                android:text="@string/weather_air_quality"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/weather_suggest_text_size2"/>
+
+            <ImageView
+                android:id="@+id/air_quality_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginRight="8dp"
+                android:layout_below="@+id/air_quality_info"
+                android:layout_toStartOf="@+id/air_quality"
+                android:src="@drawable/weather_kongqizhishu" />
+
+            <TextView
+                android:id="@+id/air_quality_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/air_quality"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/weather_suggest_text_size3"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <com.azero.sampleapp.activity.weather.widget.SquareTextView
+                android:id="@+id/ultraviolet_ray_info"
+                android:layout_width="@dimen/weather_suggest_text_view_size"
+                android:layout_height="@dimen/weather_suggest_text_view_size"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text=""
+                app:thumbColor="@color/weather_thumb_color"
+                app:trackColor="@color/weather_track_color"
+                app:thumbWidth="@dimen/weather_suggest_text_thumb_width"
+                app:trackWidth="@dimen/weather_suggest_text_track_width"
+                android:textColor="@color/weather_white"
+                android:textSize="@dimen/weather_suggest_text_size"/>
+
+            <TextView
+                android:id="@+id/ultraviolet_ray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_below="@+id/ultraviolet_ray_info"
+                android:layout_centerHorizontal="true"
+                android:text="@string/weather_ultraviolet_ray"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/weather_suggest_text_size2"/>
+
+            <ImageView
+                android:id="@+id/ultraviolet_ray_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginRight="8dp"
+                android:layout_below="@+id/ultraviolet_ray_info"
+                android:layout_toStartOf="@+id/ultraviolet_ray"
+                android:src="@drawable/weather_ziwaixian" />
+
+            <TextView
+                android:id="@+id/ultraviolet_ray_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/ultraviolet_ray"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/weather_suggest_text_size3"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -53,9 +53,10 @@ public final class GlobalBottomBar extends LinearLayout {
     private WindowManager.LayoutParams layoutParams;
 
     private volatile boolean isShow = false;
+    private volatile boolean isPlayingHideAnimation = false;
     private volatile boolean cancelHide = false;
 
-    private Handler handler = new Handler(Looper.myLooper()) {
+    private Handler handler = new Handler(getContext().getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == HIDE && !cancelHide) {
@@ -116,8 +117,10 @@ public final class GlobalBottomBar extends LinearLayout {
     }
 
     public void append(@NonNull String text, long hideDelayMillis) {
-        cancelHide = true;
-        handler.removeCallbacksAndMessages(null);
+        if (hideDelayMillis > 0) {
+            cancelHide = true;
+            handler.removeCallbacksAndMessages(null);
+        }
 
         if (isShow && !TextUtils.isEmpty(text)) {
             mBarText.setText(text);
@@ -189,7 +192,6 @@ public final class GlobalBottomBar extends LinearLayout {
             @Override
             public void onAnimationStart(Animator animation) {
                 isShow = true;
-
                 if (checkOverlayPermission()) {
                     windowManager.addView(rootView, layoutParams);
                 } else {
@@ -238,6 +240,7 @@ public final class GlobalBottomBar extends LinearLayout {
     }
 
     private void startHideAnimator(final HideAnimatorCallback callback) {
+        if (isPlayingHideAnimation) return;
         ObjectAnimator hideAnimator = ObjectAnimator
                 .ofFloat(rootView, "translationY", 0f, 200f)
                 .setDuration(400);
@@ -245,6 +248,7 @@ public final class GlobalBottomBar extends LinearLayout {
         hideAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                isPlayingHideAnimation = true;
             }
 
             @Override
@@ -259,6 +263,7 @@ public final class GlobalBottomBar extends LinearLayout {
                 if (callback != null) {
                     callback.finishHide();
                 }
+                isPlayingHideAnimation = false;
             }
 
             @Override
@@ -276,5 +281,9 @@ public final class GlobalBottomBar extends LinearLayout {
     interface HideAnimatorCallback {
 
         void finishHide();
+    }
+
+    public boolean isShow() {
+        return isShow;
     }
 }

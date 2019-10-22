@@ -31,10 +31,10 @@ import java.util.concurrent.Executors;
  * 唤醒时 调用{@link #onTapToTalk()} 或 {@link #onHoldToTalk()} 请求唤醒
  * 成功后会回调{@link #startAudioInput()}
  * 然后通过{@link #write(byte[], long)}接口灌入数据
- *
+ * <p>
  * {@link #onTapToTalk()} 唤醒后由云端下发识别结束事件，被动停止识别。
  * {@link #onHoldToTalk()} 按下按钮识别内容，松开后停止识别。由本地控制识别内容长度，主动停止识别。
- *
+ * <p>
  * 识别停止后回调{@link #stopAudioInput()} 停止灌入数据
  */
 public class SpeechRecognizerHandler extends AbsSpeechRecognizer
@@ -44,7 +44,6 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     private long beginTime;
     private AppExecutors appExecutors;
     private Context mContext;
-    private Handler handler = new Handler();
 
     public SpeechRecognizerHandler(AppExecutors executors,
                                    Context context,
@@ -60,6 +59,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
 
     /**
      * SDK回调，要求开始灌入数据
+     *
      * @return 是否可以灌入数据
      */
     @Override
@@ -72,6 +72,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
 
     /**
      * SDK回调，要求停止灌入数据
+     *
      * @return 停止灌入是否成功
      */
     @Override
@@ -83,6 +84,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
 
     /**
      * 唤醒成功
+     *
      * @param wakeWord 唤醒词
      */
     @Override
@@ -104,6 +106,9 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
      * TapToTalk唤醒模式，唤醒后由云端下发识别结束事件，被动停止识别。
      */
     public void onTapToTalk() {
+        if (GlobalBottomBar.getInstance(mContext).isShow()) {
+            showWakeupDialog();
+        }
         if (tapToTalk()) {
             mAudioCueObservable.playAudioCue(AudioCueState.START_TOUCH);
         }
@@ -113,6 +118,9 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
      * HoldToTalk唤醒模式，按下按钮识别内容，松开后停止识别。由本地控制识别内容长度，主动停止识别。
      */
     public void onHoldToTalk() {
+        if (GlobalBottomBar.getInstance(mContext).isShow()) {
+            showWakeupDialog();
+        }
         if (holdToTalk()) {
             mAllowStopCapture = true;
             mAudioCueObservable.playAudioCue(AudioCueState.START_TOUCH);
@@ -132,6 +140,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
 
     /**
      * SDK回调，获取模块名称
+     *
      * @return 模块名称
      */
     @Override
@@ -142,9 +151,10 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
 
     /**
      * 回调音频数据
-     * @name AudioInputConsumer Functions
+     *
      * @param buffer 数据buffer
-     * @param size 数据长度
+     * @param size   数据长度
+     * @name AudioInputConsumer Functions
      */
     @Override
     public void onAudioInputAvailable(byte[] buffer, int size) {
@@ -156,7 +166,6 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
      * 弹出唤醒提示框
      */
     private void showWakeupDialog() {
-        handler.removeCallbacksAndMessages(null);
         appExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).show("", 0));
     }
 
@@ -164,12 +173,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
      * 收回唤醒提示框
      */
     private void hideWakeupDialog() {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                GlobalBottomBar.getInstance(mContext).hide();
-            }
-        }, 2000);
+        appExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).hide(2000));
     }
 
     /**

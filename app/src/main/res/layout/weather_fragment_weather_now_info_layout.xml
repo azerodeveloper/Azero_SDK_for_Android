@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/weather_fine" />
+        <TextView
+            android:id="@+id/current_tempture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/weather_icon"
+            android:layout_marginStart="@dimen/weather_info_current_tempture_margin_start"
+            android:text="123"
+            android:textSize="@dimen/weather_info_current_tempture_text_size"
+            android:textColor="@android:color/white"/>
+        <TextView
+            android:id="@+id/weither"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/current_tempture"
+            android:layout_marginBottom="12dp"
+            android:layout_toEndOf="@+id/current_tempture"
+            android:textSize="@dimen/weather_info_weather_text_size"
+            android:textColor="@android:color/white"
+            android:layout_marginLeft="@dimen/weather_info_weather_margin_left"
+            android:text="123" />
+        <TextView
+            android:id="@+id/day_tempture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/current_tempture"
+            android:layout_alignStart="@+id/current_tempture"
+            android:layout_marginTop="@dimen/weather_info_day_tempture_margin_top"
+            android:textSize="@dimen/weather_info_day_tempture_text_size"
+            android:textColor="@android:color/white"
+            android:text="456" />
+
+        <ImageView
+            android:id="@+id/wind_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:layout_alignTop="@+id/day_tempture"
+            android:layout_alignBottom="@+id/day_tempture"
+            android:layout_toEndOf="@+id/day_tempture"
+            android:layout_marginLeft="@dimen/weather_info_wind_icon_margin_left"
+            android:src="@drawable/weather_dongnan" />
+
+        <TextView
+            android:id="@+id/wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/day_tempture"
+            android:layout_alignBottom="@+id/day_tempture"
+            android:layout_toEndOf="@+id/wind_icon"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:text=""
+            android:textSize="@dimen/weather_info_wind_text_size"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+</RelativeLayout>

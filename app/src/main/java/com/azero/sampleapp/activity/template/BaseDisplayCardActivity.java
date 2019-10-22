@@ -21,9 +21,14 @@ public abstract class BaseDisplayCardActivity extends BaseTemplateActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         //触碰界面时，阻止界面收回，时钟重新计时
-        if (templateRuntimeHandler != null) {
-            templateRuntimeHandler.reclockTemplateTimer();
-        }
+        reclockTemplateTimer();
         return super.dispatchTouchEvent(ev);
+    }
+
+    protected boolean reclockTemplateTimer(){
+        if (templateRuntimeHandler != null) {
+            return templateRuntimeHandler.reclockTemplateTimer();
+        }
+        return false;
     }
 }

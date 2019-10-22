@@ -266,10 +266,10 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
                         case "DefaultTemplate2":
                             mTemplateViewController.showDisplayCard(template, TemplateViewController.BODY_TEMPLATE2);
                             break;
-                        case "ShowAlerts":
+                        case "AlertsListTemplate":
                             mTemplateViewController.showDisplayCard(template, TemplateViewController.SHOW_ALERTS_INFO);
                             break;
-                        case "AlertRingtone":
+                        case "AlertRingtoneTemplate":
                             mTemplateViewController.showDisplayCard(template, TemplateViewController.SHOW_ALERT_RINGING_INFO);
                             break;
                         default:

@@ -1,0 +1,40 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tool_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:minHeight="?attr/actionBarSize">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/back_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/weather_back_button_drawable" />
+
+        <TextView
+            android:id="@+id/main_title"
+            style="@style/weather_toolbar_title_stytle"
+            android:layout_marginLeft="0dp"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/week_day"
+            style="@style/weather_toolbar_title_stytle"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/city"
+            style="@style/weather_toolbar_title_stytle"
+            android:text="" />
+    </LinearLayout>
+</android.support.v7.widget.Toolbar>

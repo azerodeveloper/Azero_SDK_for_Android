@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+
+    <declare-styleable name="SquareTextView">
+        <attr name="thumbColor" format="color" />
+        <attr name="trackColor" format="color" />
+        <attr name="thumbWidth" format="dimension"/>
+        <attr name="trackWidth" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="LineDecoration">
+        <attr name="listDivider" format="reference" />
+        <attr name="padding" format="dimension" />
+        <attr name="paddingLeft" format="dimension" />
+        <attr name="paddingRight" format="dimension" />
+        <attr name="paddingTop" format="dimension" />
+        <attr name="paddingBottom" format="dimension" />
+        <attr name="orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+    </declare-styleable>
+
+
+</resources>

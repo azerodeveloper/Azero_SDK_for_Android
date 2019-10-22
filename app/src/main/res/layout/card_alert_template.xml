@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="49dp"
         android:gravity="center"
-        android:text="闹钟和日程提醒"
+        android:text=""
         android:textColor="#ffffff"
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent" />

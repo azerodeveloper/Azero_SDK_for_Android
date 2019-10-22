@@ -105,7 +105,7 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
         }
 
         public void stop() {
-            handler.removeCallbacks(this);
+            handler.removeCallbacksAndMessages(null);
         }
 
         public void destroy() {

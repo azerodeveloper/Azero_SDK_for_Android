@@ -118,7 +118,7 @@ public class Utils {
 
     public static String getimei(@NonNull Context context) {
         Objects.requireNonNull(context);
-
+        String defaultSN = "12345678";
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (telephonyManager == null)
             return null;
@@ -127,7 +127,7 @@ public class Utils {
             return null;
         }
 
-        String imei = null;
+        String imei = defaultSN;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -135,6 +135,7 @@ public class Utils {
                 } else {
                     imei = telephonyManager.getDeviceId();
                 }
+                imei = (imei == null) ? defaultSN :imei;
                 return imei;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -143,6 +144,7 @@ public class Utils {
         } else {
             try {
                 imei = telephonyManager.getImei();
+                imei = (imei == null) ? defaultSN :imei;
                 return imei;
             } catch (Exception e) {
                 e.printStackTrace();

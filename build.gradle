@@ -1,5 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ext {
 
+    minSdkVersion = 19
+    targetSdkVersion = 26
+    compileSdkVersion = 26
+    appCompatVersion  = '26.1.0'
+    recyclerviewVersion = '26.1.0'
+    // ExoPlayer version and version code.
+    exoplayerVersion = '2.10.5'
+}
 buildscript {
 
     repositories {

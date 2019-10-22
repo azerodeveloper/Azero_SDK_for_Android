@@ -15,7 +15,6 @@ package com.azero.sampleapp.activity.playerinfo.news;
 
 import android.content.Intent;
 import android.graphics.Rect;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +24,7 @@ import com.azero.platforms.iface.MediaPlayer;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.playerinfo.BasePlayerInfoActivity;
 import com.azero.sampleapp.activity.playerinfo.news.bean.NewsInfo;
+import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sampleapp.util.DisplayUtils;
 import com.azero.sdk.AzeroManager;
 import com.azero.sdk.event.Command;
@@ -32,7 +32,6 @@ import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,7 +42,7 @@ import java.util.List;
 public class NewsActivity extends BasePlayerInfoActivity {
     private List<NewsInfo> mDataList = new ArrayList<>();
 
-    private List<Integer> operateQueue = new LinkedList<>();
+    private List<Integer> mOperateQueue = new LinkedList<>();
 
     private RecyclerView mRecyclerView;
 
@@ -54,6 +53,8 @@ public class NewsActivity extends BasePlayerInfoActivity {
     private int mCurrentPosition;
 
     private boolean mShouldPlayOnStart;
+
+    private MediaPlayer.OnMediaStateChangeListener mMediaStateChangeListener;
 
     @Override
     protected int getLayoutResId() {
@@ -89,20 +90,19 @@ public class NewsActivity extends BasePlayerInfoActivity {
                     if (offset > 0) {
                         for (int i = 0; i < offset; i++) {
                             AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_NEXT);
-                            operateQueue.add(++mCurrentPosition);
+                            mOperateQueue.add(++mCurrentPosition);
                         }
                     } else if (offset < 0) {
                         for (int i = 0; i < -offset; i++) {
                             AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_PREVIOUS);
-                            operateQueue.add(--mCurrentPosition);
+                            mOperateQueue.add(--mCurrentPosition);
                         }
                     }
                 }
             }
         });
 
-        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
-        mediaPlayerHandler.addOnMediaStateChangeListener(new MediaPlayer.OnMediaStateChangeListener() {
+        mMediaStateChangeListener = new MediaPlayer.OnMediaStateChangeListener() {
             @Override
             public void onMediaError(String playerName, String msg, MediaPlayer.MediaError mediaError) {
                 log.e("playerName: " + playerName + " reason: " + msg + " Error:" + mediaError.toString());
@@ -127,7 +127,9 @@ public class NewsActivity extends BasePlayerInfoActivity {
             public void onPositionChange(String s, long l, long l1) {
                 // do nothing
             }
-        });
+        };
+        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        mediaPlayerHandler.addOnMediaStateChangeListener(mMediaStateChangeListener);
     }
 
     @Override
@@ -135,34 +137,7 @@ public class NewsActivity extends BasePlayerInfoActivity {
         try {
             // 1.尝试更新数据列表
             JSONObject playerInfo = new JSONObject(intent.getStringExtra(Constant.EXTRA_TEMPLATE));
-            JSONArray contents = playerInfo.getJSONArray("contents");
-            List<NewsInfo> newList = new ArrayList<>();
-            int len = contents.length();
-            for (int i = 0; i < len; i++) {
-                JSONObject content = contents.getJSONObject(i);
-                NewsInfo newsInfo = new NewsInfo();
-                newsInfo.setTitle(content.getString("title"));
-                JSONObject art = content.getJSONObject("art");
-                JSONObject source = art.getJSONArray("sources").getJSONObject(0);
-                String url = source.getString("url");
-                newsInfo.setPicUrl(url);
-                JSONObject provider = content.getJSONObject("provider");
-                newsInfo.setSource(provider.getString("name"));
-                newList.add(newsInfo);
-            }
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new NewsAdapter.NewsDiffCallback(mDataList, newList));
-            mAdapter.setDataList(newList);
-            diffResult.dispatchUpdatesTo(mAdapter);
-            mDataList = newList;
-
-            // 2.定位当前新闻的位置
-            JSONObject content = playerInfo.getJSONObject("content");
-            int position = content.getInt("position");
-            checkOperate(position);
-            if (position != mCurrentPosition && operateQueue.isEmpty()) {
-                mCurrentPosition = position;
-                mRecyclerView.smoothScrollToPosition(position);
-            }
+            ConfigureTemplateView.configureNewsTemplate(this, playerInfo);
         } catch (JSONException e) {
             log.e(e.getMessage());
             finish();
@@ -183,10 +158,11 @@ public class NewsActivity extends BasePlayerInfoActivity {
         AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_PAUSE);
     }
 
-    private void checkOperate(int position) {
-        if (!operateQueue.isEmpty() && operateQueue.get(0) == position) {
-            operateQueue.remove(0);
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        mediaPlayerHandler.removeOnMediaStateChangeListener(mMediaStateChangeListener);
     }
 
     class NewsItemDecoration extends RecyclerView.ItemDecoration {
@@ -209,5 +185,33 @@ public class NewsActivity extends BasePlayerInfoActivity {
                 outRect.right = DisplayUtils.dp2px(16.5f);
             }
         }
+    }
+
+    public List<NewsInfo> getDataList() {
+        return mDataList;
+    }
+
+    public void setDataList(List<NewsInfo> dataList) {
+        mDataList = dataList;
+    }
+
+    public NewsAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    public int getCurrentPosition() {
+        return mCurrentPosition;
+    }
+
+    public void setCurrentPosition(int position) {
+        mCurrentPosition = position;
+    }
+
+    public List<Integer> getOperateQueue() {
+        return mOperateQueue;
     }
 }

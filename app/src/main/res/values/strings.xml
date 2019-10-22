@@ -182,5 +182,13 @@
     <!--Alert-->
     <string name="alerts_delete">删除</string>
     <string name="alert_text_1">右滑关闭</string>
+    <!--playerinfo-->
+    <string name="album_info">专辑：%s</string>
+    <string name="text_devider">/</string>
 
+    <string name="weather_temperature">%1$s℃</string>
+    <string name="weather_wind">%1$s风</string>
+    <string name="weather_day_temprure">%1$s℃~%2$s℃</string>
+    <string name="weather_air_quality">空气质量指数</string>
+    <string name="weather_ultraviolet_ray">紫外线指数</string>
 </resources>

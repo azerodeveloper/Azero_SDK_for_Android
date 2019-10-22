@@ -106,7 +106,7 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
             //选择和注册必要模块
             HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
                     .setAudioHandler(HandlerContainerBuilder.AUDIO.SOUNDAI)
-                    .setMusicHandler(HandlerContainerBuilder.MUSIC.MIGU)
+                    .setMusicHandler(HandlerContainerBuilder.MUSIC.SOUNDAI)
                     .setVideoHandler(HandlerContainerBuilder.VIDEO.MIFENG)
                     .setPhoneCallHandler(phone)
                     .setSpeechRecognizer(speechRecognizerHandler) //必须注册识别模块

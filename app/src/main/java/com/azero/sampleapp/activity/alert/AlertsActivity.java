@@ -19,20 +19,20 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.template.BaseDisplayCardActivity;
 import com.azero.sampleapp.activity.alert.bean.AlertInfo;
+import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.Alerts.AlertsHandler;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class AlertsActivity extends BaseDisplayCardActivity implements View.OnClickListener {
@@ -40,15 +40,16 @@ public class AlertsActivity extends BaseDisplayCardActivity implements View.OnCl
     private AlertsAdapter mAlertsAdapter;
     private AlertsRecyclerView mAlertsRecyclerView;
     private AlertsHandler mAlerts;
+    private TextView mTextViewTitle;
 
     @Override
     protected int getLayoutResId() {
         return R.layout.card_alert_template;
     }
 
-
     @Override
     protected void initView() {
+        mTextViewTitle = findViewById(R.id.textView_title);
         mAlertsRecyclerView = findViewById(R.id.recycleView_alerts);
         mAlertsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -65,29 +66,7 @@ public class AlertsActivity extends BaseDisplayCardActivity implements View.OnCl
     protected void initData(Intent intent) {
         try {
             JSONObject template = new JSONObject(intent.getStringExtra(Constant.EXTRA_TEMPLATE));
-            log.d("initData: " + template.toString());
-            JSONArray array = template.getJSONArray("alertsInfoList");
-            List<AlertInfo> list = new LinkedList<>();
-            AlertInfo alertInfo;
-            for (int i = 0; i < array.length(); i++) {
-                alertInfo = new AlertInfo();
-                JSONObject jsonObject = array.getJSONObject(i);
-                alertInfo.setAlertId(jsonObject.getString("alertId"));
-                alertInfo.setIndex(jsonObject.getInt("index"));
-                alertInfo.setEvent(jsonObject.getString("event"));
-                alertInfo.setTriggerTime(jsonObject.getString("triggerTime"));
-                list.add(alertInfo);
-            }
-            mAlertsAdapter = new AlertsAdapter(this, list);
-            mAlertsRecyclerView.setAdapter(mAlertsAdapter);
-            mAlertsAdapter.setOnDeleteClickListener(new AlertsAdapter.OnDeleteClickListener() {
-                @Override
-                public void onDeleteClick(String alertToken) {
-                    if (mAlerts != null) {
-                        mAlerts.removeAlert(alertToken);
-                    }
-                }
-            });
+            ConfigureTemplateView.configureAlertsListTemplate(this, template);
         } catch (JSONException e) {
             log.e(e.getMessage());
             finish();
@@ -110,4 +89,25 @@ public class AlertsActivity extends BaseDisplayCardActivity implements View.OnCl
         super.onStop();
         finish();
     }
+
+    public void setAlertsAdapter(List<AlertInfo> list) {
+        mAlertsAdapter = new AlertsAdapter(this, list);
+    }
+
+    public TextView getTextViewTitle() {
+        return mTextViewTitle;
+    }
+
+    public AlertsHandler getAlerts() {
+        return mAlerts;
+    }
+
+    public AlertsRecyclerView getAlertsRecyclerView() {
+        return mAlertsRecyclerView;
+    }
+
+    public AlertsAdapter getAlertsAdapter() {
+        return mAlertsAdapter;
+    }
+
 }

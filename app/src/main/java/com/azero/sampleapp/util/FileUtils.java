@@ -13,6 +13,8 @@
 
 package com.azero.sampleapp.util;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,5 +46,9 @@ public class FileUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static String getExternalStorageDirectory(){
+        return Environment.getExternalStorageDirectory().getPath();
     }
 }

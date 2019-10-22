@@ -3,6 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
     </style>
@@ -44,5 +45,29 @@
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
     </style>
-
+    <style name="weather_toolbar_title_stytle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/weather_title_text_size</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:visibility">visible</item>
+        <item name="android:layout_gravity">center_vertical|left</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_marginLeft">18dp</item>
+    </style>
+    <style name="WeatherAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="background">@android:color/transparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+    <style name="ComImageButtonStyle" parent="@android:style/Widget.ImageButton">
+        <item name="android:maxWidth">28dp</item>
+        <item name="android:maxHeight">28dp</item>
+    </style>
 </resources>

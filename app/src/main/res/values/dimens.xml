@@ -12,4 +12,31 @@
 
     <dimen name="text_size_big">18sp</dimen>
     <dimen name="text_size_small">12sp</dimen>
+
+    <dimen name="weather_title_text_size">18sp</dimen>
+    <dimen name="weather_info_current_tempture_text_size">66sp</dimen>
+    <dimen name="weather_info_current_tempture_margin_start">70dp</dimen>
+    <dimen name="weather_info_weather_text_size">25sp</dimen>
+    <dimen name="weather_info_weather_margin_left">12dp</dimen>
+    <dimen name="weather_info_day_tempture_margin_top">14dp</dimen>
+    <dimen name="weather_info_day_tempture_text_size">21sp</dimen>
+    <dimen name="weather_info_wind_icon_margin_left">33dp</dimen>
+    <dimen name="weather_info_wind_text_size">15sp</dimen>
+    <dimen name="weather_info_weather_tmp_day_margin_left">57dp</dimen>
+    <dimen name="weather_info_weather_tmp_day_text_size">55sp</dimen>
+    <dimen name="weather_air_layout_margin_right">24dp</dimen>
+    <dimen name="weather_air_layout_margin_left">24dp</dimen>
+    <dimen name="weather_air_layout_margin_top">76dp</dimen>
+    <dimen name="weather_suggest_text_view_size">93dp</dimen>
+    <dimen name="weather_suggest_text_thumb_width">8dp</dimen>
+    <dimen name="weather_suggest_text_track_width">5dp</dimen>
+    <dimen name="weather_suggest_text_size">30sp</dimen>
+    <dimen name="weather_suggest_text_size2">18sp</dimen>
+    <dimen name="weather_suggest_text_size3">21sp</dimen>
+    <dimen name="weather_suggest_layout_margin_top2">94dp</dimen>
+    <dimen name="weather_not_support_text_size">40sp</dimen>
+    <dimen name="weather_week_text_size">17sp</dimen>
+    <dimen name="weather_icon_size">54dp</dimen>
+    <dimen name="weather_tempeture_text_size_smail">15sp</dimen>
+
 </resources>

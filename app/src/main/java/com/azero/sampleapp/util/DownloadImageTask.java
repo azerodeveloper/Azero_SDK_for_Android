@@ -49,7 +49,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         if(result!=null){
             mImage.get().setImageBitmap( result );
         }else{
-            mImage.get().setImageResource(R.mipmap.default_img);
+            mImage.get().setImageResource(R.drawable.img_default);
         }
 
     }

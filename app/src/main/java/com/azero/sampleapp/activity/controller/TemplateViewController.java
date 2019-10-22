@@ -17,16 +17,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.azero.sampleapp.activity.playerinfo.playerpager.PlayerInfoViewPagerActivity;
 import com.azero.sampleapp.manager.ActivityLifecycleManager;
 import com.azero.sampleapp.activity.alert.AlertRingtoneActivity;
 import com.azero.sampleapp.activity.alert.AlertsActivity;
 import com.azero.sampleapp.activity.playerinfo.news.NewsActivity;
-import com.azero.sampleapp.activity.playerinfo.playerinfo.PlayerInfoActivity;
 import com.azero.sampleapp.activity.template.BodyTemplate1Activity;
 import com.azero.sampleapp.activity.template.BodyTemplate2Activity;
 import com.azero.sampleapp.activity.template.ListTemplate1Activity;
 import com.azero.sampleapp.activity.template.PhotoprathyActivity;
-import com.azero.sampleapp.activity.template.WeatherActivity;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
@@ -66,13 +65,13 @@ public class TemplateViewController {
                 intent.setClass(context, ListTemplate1Activity.class);
                 break;
             case WEATHER_TEMPLATE:
-                intent.setClass(context, WeatherActivity.class);
+                intent.setClass(context, com.azero.sampleapp.activity.template.WeatherActivity.class);
                 break;
             case SET_DESTINATION_TEMPLATE:
             case LOCAL_SEARCH_LIST_TEMPLATE1:
                 return;
             case RENDER_PLAYER_INFO:
-                intent.setClass(context, PlayerInfoActivity.class);
+                intent.setClass(context, PlayerInfoViewPagerActivity.class);
                 break;
             case SHOW_ALERTS_INFO:
                 intent.setClass(context, AlertsActivity.class);

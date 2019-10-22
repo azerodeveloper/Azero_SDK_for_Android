@@ -68,4 +68,13 @@
     <color name="news_text_color">#333333</color>
     <color name="news_mask_color">#80000000</color>
     <color name="news_dividing_line_color">#a5cfe6</color>
+
+    <!--transparence color-->
+    <color name="transcolor5">#80000000</color>
+
+    <color name="weather_black_overlay">#66000000</color>
+    <color name="weather_thumb_color">@android:color/white</color>
+    <color name="weather_track_color">#66FFFFFF</color>
+    <color name="weather_white">#FFFFFF</color>
+    <color name="weather_line">#D5D5D5</color>
 </resources>

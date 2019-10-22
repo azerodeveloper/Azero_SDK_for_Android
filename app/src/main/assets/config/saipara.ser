@@ -4,21 +4,21 @@
 --aec.kInRecord=1
 --aec.kOutRecord=1
 
---mic.kInputAmplify=2  
+--mic.kInputAmplify=6  
 --mic.kTargetAmpOfAsr=2000
 --mic.kTargetAmpOfVad=8000
 --mic.kTargetAmpOfWake=-5
 --mic.kDeviceVolume=-9999
 --mic.kAecPostFilterOn=1
 --mic.kWakeupSpkH=1783
---mic.kWakeupSpkL=891.5
+--mic.kWakeupSpkL=892
 --mic.kAecPostFilterMethod=1
 --mic.kTvOn=0
 --mic.kAsrAgcOn=1
 --mic.kWakeupAgcOn=1
 --mic.kOneShotOn=1
 --mic.kAutoFeedbackEnd=0
---mic.kFixEndFrm=1000
+--mic.kFixEndFrm=800
 --mic.kFrameEngineNoise=0
 --mic.kWhiteNoiseInsteadEndFrame=0
 --mic.kFeedbackEndDelyFrame=-9999
@@ -48,7 +48,7 @@
 --paraload.kVadLocalOn=1
 --paraload.gsc_wakeup_on=1
 --paraload.degree_num=37
---paraload.cache_num=8
+--paraload.cache_num=16
 --paraload.doa_fre_high=3200
 --paraload.doa_fre_low=1200
 --paraload.doa_fre_mid=2200
@@ -64,9 +64,9 @@
 --sdk.default_config_path=/sdcard
 --sdk.ivw_prefix=50
 --sdk.ivw_suffix=50
---sdk.use_ivw_threads=1
---sdk.raw_data_size=0
---sdk.disable_aec_mica_cache=1
+--sdk.use_ivw_threads=0
+--sdk.raw_data_size=64
+--sdk.disable_aec_mica_cache=-64
 --sdk.disable_aec_voip_cache=1
 --sdk.disable_mono_voip_cache=1
 --sdk.ivw_th_augment=-9999
@@ -81,15 +81,15 @@
 --voip.kDoaVoip=-9999
 --voip.kVoipRecordOn=1
 
---wake.kWakeupGlobalConfidenceTh=30
+--wake.kWakeupGlobalConfidenceTh=50
 --wake.kUseSecondDnn=-9999
 --wake.kUseOnlyOneSecondDnn=-9999
 --wake.kFrameJump1=2
 --wake.kFrameJump2=2
 --wake.kBackgroundTh=0.5
---wake.kPhoneLostRatio=1.75
+--wake.kPhoneLostRatio=1.2
 --wake.kPhoneRejectRatio1=50
 --wake.kPhoneRejectRatio2=0.9
 --wake.kShutWakeupWords=-9999
---wake.kWakeLenRatio=1.2
+--wake.kWakeLenRatio=1
 --wake.kSecondTimeLen=0

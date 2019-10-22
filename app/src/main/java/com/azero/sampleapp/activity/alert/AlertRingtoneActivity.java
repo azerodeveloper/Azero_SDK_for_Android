@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.template.BaseDisplayCardActivity;
+import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sampleapp.widget.SlidingView;
 import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.Alerts.AlertsHandler;
@@ -34,11 +35,8 @@ import org.json.JSONObject;
 
 public class AlertRingtoneActivity extends BaseDisplayCardActivity {
 
-    private TextView alertTime;
-    private TextView alertEvent;
-
-    private static final String ALERT_TIME = "alert_time";
-    private static final String ALERT_EVENT = "alert_event";
+    private TextView mAlertTimeTextView;
+    private TextView mAlertEventTextView;
 
     private AlertsHandler alerts;
 
@@ -58,8 +56,8 @@ public class AlertRingtoneActivity extends BaseDisplayCardActivity {
 
     @Override
     protected void initView() {
-        alertTime = findViewById(R.id.alert_time);
-        alertEvent = findViewById(R.id.alert_event);
+        mAlertTimeTextView = findViewById(R.id.alert_time);
+        mAlertEventTextView = findViewById(R.id.alert_event);
         ConstraintLayout alertLayout = findViewById(R.id.alert_ringtone_layout);
         ImageView alertClockIcon = findViewById(R.id.alert_clock_icon);
         ImageView alertImage = findViewById(R.id.alert_image);
@@ -78,17 +76,8 @@ public class AlertRingtoneActivity extends BaseDisplayCardActivity {
         String payload = intent.getStringExtra(Constant.EXTRA_TEMPLATE);
         log.d("payload: " + payload);
         try {
-            JSONObject payloadJson = new JSONObject(payload);
-            String time = "";
-            String event = "";
-            if (payloadJson.has(ALERT_TIME)) {
-                time = payloadJson.getString(ALERT_TIME);
-            }
-            if (payloadJson.has(ALERT_EVENT)) {
-                event = payloadJson.getString(ALERT_EVENT);
-            }
-            alertTime.setText(time);
-            alertEvent.setText(event);
+            JSONObject template = new JSONObject(payload);
+            ConfigureTemplateView.configureAlertRingtoneTemplate(this, template);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -98,5 +87,13 @@ public class AlertRingtoneActivity extends BaseDisplayCardActivity {
     protected void onDestroy() {
         super.onDestroy();
         alerts.localStop();
+    }
+
+    public TextView getAlertTimeTextView() {
+        return mAlertTimeTextView;
+    }
+
+    public TextView getAlertEventTextView() {
+        return mAlertEventTextView;
     }
 }

@@ -82,6 +82,11 @@ public class ActivityLifecycleManager implements Application.ActivityLifecycleCa
     @Override
     public void onActivityDestroyed(Activity activity) {
         activityStack.remove(activity);
+        if (activity instanceof BaseDisplayCardActivity) {
+            templateList.remove(activity);
+        } else if (activity instanceof BasePlayerInfoActivity) {
+            playerInfoList.remove(activity);
+        }
     }
 
     public Activity getCurActivity() {
@@ -90,6 +95,7 @@ public class ActivityLifecycleManager implements Application.ActivityLifecycleCa
 
     /**
      * 关闭指定类型的界面
+     *
      * @param channelName
      */
     public void clearChannel(ChannelName channelName) {
@@ -115,6 +121,7 @@ public class ActivityLifecycleManager implements Application.ActivityLifecycleCa
 
     /**
      * 获取栈顶Activity
+     *
      * @return
      */
     public Activity getTopActivity() {
@@ -126,6 +133,7 @@ public class ActivityLifecycleManager implements Application.ActivityLifecycleCa
 
     /**
      * 判断当前是否在首页
+     *
      * @return
      */
     public boolean topIsLauncher() {
@@ -145,6 +153,7 @@ public class ActivityLifecycleManager implements Application.ActivityLifecycleCa
 
     /**
      * 应用是否在前台
+     *
      * @return
      */
     public boolean isAppForeground() {

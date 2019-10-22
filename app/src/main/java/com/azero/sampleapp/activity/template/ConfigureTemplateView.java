@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +26,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.azero.sampleapp.R;
+import com.azero.sampleapp.activity.alert.AlertRingtoneActivity;
+import com.azero.sampleapp.activity.alert.AlertsActivity;
+import com.azero.sampleapp.activity.alert.AlertsAdapter;
+import com.azero.sampleapp.activity.alert.bean.AlertInfo;
+import com.azero.sampleapp.activity.playerinfo.news.NewsActivity;
+import com.azero.sampleapp.activity.playerinfo.news.NewsAdapter;
+import com.azero.sampleapp.activity.playerinfo.news.bean.NewsInfo;
 import com.azero.sampleapp.activity.playerinfo.playerinfo.PlayerInfoActivity;
-import com.azero.sampleapp.activity.template.BodyTemplate1Activity;
-import com.azero.sampleapp.activity.template.BodyTemplate2Activity;
-import com.azero.sampleapp.activity.template.ListTemplate1Activity;
-import com.azero.sampleapp.activity.template.QrCodeActivity;
-import com.azero.sampleapp.activity.template.WeatherActivity;
+import com.azero.sampleapp.activity.playerinfo.playerpager.PlayerInfoFragment;
 import com.azero.sampleapp.util.DownloadImageTask;
+import com.azero.sampleapp.util.GlideManager;
 import com.azero.sampleapp.util.QRCUtils;
 import com.azero.sdk.util.log;
 import com.bumptech.glide.Glide;
@@ -43,7 +48,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 配置界面内容
@@ -347,6 +354,49 @@ public class ConfigureTemplateView {
         }
     }
 
+    public static void configurePlayerInfo(PlayerInfoFragment pa, JSONObject template) {
+        log.e("configurePlayerInfo****");
+        try {
+            String header = "";
+            String headerSubtext1 = "";
+            String albumTitle = "";
+            String name = "";
+            if (template.has("header")) {
+                header = template.getString("header");
+            }
+            int isShow = "广播".equals(header)?View.GONE:View.VISIBLE;
+            pa.getProgressGroup().setVisibility(isShow);
+           if (template.has("headerSubtext1")) {
+                headerSubtext1 = template.getString("headerSubtext1");
+            }
+            if (template.has("provider")) {
+                // Set header subtext to provider name if no header subtext given
+                JSONObject provider = template.getJSONObject("provider");
+                if (provider.has("name")) {
+                    name = provider.getString("name");
+                }
+                if (provider.has("album")) {
+                    albumTitle = provider.getString("album");
+                }
+            }
+            pa.getTitleSubtext1().setText(name);
+            pa.getTitleSubtext2().setText("专辑："+albumTitle);
+
+            String title = template.has("title")
+                    ? template.getString("title") : "";
+            pa.getmTitle().setText(title);
+            if (template.has("art")) {
+                JSONObject art = template.getJSONObject("art");
+                String url = getImageUrl(art);
+//                new DownloadImageTask(pa.getArt()).execute(url);
+                GlideManager.loadImg(pa.getActivity(),url,pa.getArt(),300,300);
+            } else {
+                pa.getArt().setImageDrawable(null);
+            }
+        } catch (JSONException e) {
+            log.e(e.getMessage());
+        }
+    }
     public static void configureAndLink(QrCodeActivity qca, JSONObject json) {
         try {
             if (json.has("type")) {
@@ -388,6 +438,102 @@ public class ConfigureTemplateView {
 
         } catch (JSONException e) {
             log.e("QrCodeJson, configureAndLink: " + e);
+        }
+    }
+
+    public static void configureAlertsListTemplate(AlertsActivity aa, JSONObject template) {
+        try {
+            List<AlertInfo> list = new ArrayList<>();
+
+            if (template.has("alertsTemplateList")) {
+                JSONArray array = template.getJSONArray("alertsTemplateList");
+                AlertInfo alertInfo;
+                for (int i = 0; i < array.length(); i++) {
+                    alertInfo = new AlertInfo();
+                    JSONObject jsonObject = array.getJSONObject(i);
+                    alertInfo.setAlertId(jsonObject.getString("alertToken"));
+                    alertInfo.setIndex(jsonObject.getInt("alertIndex"));
+                    alertInfo.setEvent(jsonObject.getString("alertEvent"));
+                    alertInfo.setTriggerTime(jsonObject.getString("alertTriggerTime"));
+                    list.add(alertInfo);
+                }
+            }
+            aa.getTextViewTitle().setText(template.getString("title"));
+            aa.setAlertsAdapter(list);
+            AlertsAdapter alertsAdapter = aa.getAlertsAdapter();
+            if (alertsAdapter != null) {
+                aa.getAlertsRecyclerView().setAdapter(alertsAdapter);
+                alertsAdapter.setOnDeleteClickListener(new AlertsAdapter.OnDeleteClickListener() {
+                    @Override
+                    public void onDeleteClick(String alertToken) {
+                        if (aa.getAlerts() != null) {
+                            aa.getAlerts().removeAlert(alertToken);
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            log.e(e.getMessage());
+        }
+    }
+
+    public static void configureAlertRingtoneTemplate(AlertRingtoneActivity ara, JSONObject template) {
+        try {
+            String time = "";
+            String event = "";
+            if (template.has("alert_time")) {
+                time = template.getString("alert_time");
+            }
+            if (template.has("alert_event")) {
+                event = template.getString("alert_event");
+            }
+            ara.getAlertTimeTextView().setText(time);
+            ara.getAlertEventTextView().setText(event);
+        } catch (Exception e) {
+            log.e(e.getMessage());
+        }
+    }
+
+    public static void configureNewsTemplate(NewsActivity na, JSONObject playerInfo) {
+        try {
+            // 1.尝试更新数据列表
+            JSONArray contents = playerInfo.getJSONArray("contents");
+            List<NewsInfo> newList = new ArrayList<>();
+            int len = contents.length();
+            for (int i = 0; i < len; i++) {
+                JSONObject content = contents.getJSONObject(i);
+                NewsInfo newsInfo = new NewsInfo();
+                newsInfo.setTitle(content.getString("title"));
+                JSONObject art = content.getJSONObject("art");
+                JSONObject source = art.getJSONArray("sources").getJSONObject(0);
+                String url = source.getString("url");
+                newsInfo.setPicUrl(url);
+                JSONObject provider = content.getJSONObject("provider");
+                newsInfo.setSource(provider.getString("name"));
+                newList.add(newsInfo);
+            }
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new NewsAdapter.NewsDiffCallback(na.getDataList(), newList));
+            na.getAdapter().setDataList(newList);
+            diffResult.dispatchUpdatesTo(na.getAdapter());
+            na.setDataList(newList);
+
+            // 2.定位当前新闻的位置
+            JSONObject content = playerInfo.getJSONObject("content");
+            int position = content.getInt("position");
+
+            // 3.检查用户的操作队列，全部处理完后才自动滑动到对应的position，防止出现页面跳动
+            List<Integer> operateQueue = na.getOperateQueue();
+            if (!operateQueue.isEmpty() && operateQueue.get(0) == position) {
+                operateQueue.remove(0);
+            }
+
+            if (position != na.getCurrentPosition() && operateQueue.isEmpty()) {
+                na.setCurrentPosition(position);
+                na.getRecyclerView().smoothScrollToPosition(position);
+            }
+        } catch (JSONException e) {
+            log.e(e.getMessage());
+            na.finish();
         }
     }
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.azero.sampleapp"
-    android:sharedUserId="com.amazon.AlexaAutoUserId">
+    package="com.azero.sampleapp">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -33,6 +32,7 @@
         <activity
             android:name=".activity.launcher.LauncherActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -70,6 +70,11 @@
             android:name=".activity.playerinfo.playerinfo.PlayerInfoActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".activity.playerinfo.playerpager.PlayerInfoViewPagerActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme" />
         <activity
             android:name="com.azero.sampleapp.activity.template.PhotoprathyActivity"
             android:launchMode="singleTask" />
@@ -85,7 +90,10 @@
         <activity
             android:name=".activity.playerinfo.news.NewsActivity"
             android:launchMode="singleTask" />
-
+	    
+        <activity android:name=".activity.weather.WeatherActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/WeatherAppTheme"></activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="" />

@@ -21,8 +21,8 @@ import android.widget.TextView;
 
 import com.azero.platforms.iface.MediaPlayer;
 import com.azero.sampleapp.R;
-import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sampleapp.activity.playerinfo.BasePlayerInfoActivity;
+import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sdk.AzeroManager;
 import com.azero.sdk.event.Command;
 import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
@@ -50,6 +50,9 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
     private ImageView mArt;
     private boolean seeking = false;
 
+    private MediaPlayer.OnMediaStateChangeListener mMediaStateChangeListener;
+    private TemplateDispatcher mTemplateDispatcher;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.card_render_player_info;
@@ -75,6 +78,9 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
                 AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_PAUSE);
             }
         });
+
+        registerListeners();
+
         start();
     }
 
@@ -87,8 +93,10 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
             log.e(e.getMessage());
             finish();
         }
-        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
-        mMediaPlayer.addOnMediaStateChangeListener(new MediaPlayer.OnMediaStateChangeListener() {
+    }
+
+    private void registerListeners() {
+        mMediaStateChangeListener = new MediaPlayer.OnMediaStateChangeListener() {
             @Override
             public void onMediaError(String playerName, String msg, MediaPlayer.MediaError mediaError) {
                 log.e("playerName: " + playerName + " reason: " + msg + " Error:" + mediaError.toString());
@@ -118,7 +126,9 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
                 mEndTime.setText(stringForTime((int) duration));
                 mProgressTime.setText(stringForTime((int) position));
             }
-        });
+        };
+        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        mMediaPlayer.addOnMediaStateChangeListener(mMediaStateChangeListener);
 
         mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -139,22 +149,19 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 seeking = false;
-                if (mMediaPlayer != null) {
-                    long duration = mMediaPlayer.getDuration();
-                    int progress = 0;
-                    //直接拖到头状态会有问题
-                    if ((progress = seekBar.getProgress()) == 1000) {
-                        progress = 999;
-                    }
-                    long position = progress * duration / 1000L;
-                    log.d("progress:" + seekBar.getProgress());
-                    mMediaPlayer.setPosition(position);
+                long duration = mMediaPlayer.getDuration();
+                int progress = 0;
+                //直接拖到头状态会有问题
+                if ((progress = seekBar.getProgress()) == 1000) {
+                    progress = 999;
                 }
+                long position = progress * duration / 1000L;
+                log.d("progress:" + seekBar.getProgress());
+                mMediaPlayer.setPosition(position);
             }
         });
 
-        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
-        templateRuntimeHandler.registerTemplateDispatchedListener(new TemplateDispatcher() {
+        mTemplateDispatcher = new TemplateDispatcher() {
             @Override
             public void renderPlayerInfo(String payload) {
                 runOnUiThread(() -> {
@@ -165,7 +172,22 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
                     }
                 });
             }
-        });
+        };
+        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
+        templateRuntimeHandler.registerTemplateDispatchedListener(mTemplateDispatcher);
+    }
+
+    private void unregisterListeners() {
+        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
+        mMediaPlayer.removeOnMediaStateChangeListener(mMediaStateChangeListener);
+        templateRuntimeHandler.unregisterTemplateDispatchedListener(mTemplateDispatcher);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterListeners();
     }
 
     private void executeRenderPlayerInfo(String payload) throws JSONException {
