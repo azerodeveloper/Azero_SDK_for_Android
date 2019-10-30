@@ -87,3 +87,10 @@ Config config = new Config(
 ## 进阶集成和调优<a id="advanced"> </a> 
 
 完成上述过程，您已经对Azero的语音基本交互过程有了初步体验，如需将Azero SDK集成到您的工程，并针对您的自有设备进行唤醒、识别等语音交互效果的调优请参照进阶文档。
+
+
+
+##  已知问题
+
+- Version 1.0.1及其之前版本中Launcher background图片可能会失效，届时您可选择自行替换其背景图片，也可选择试用[补丁](./patch/launcher_backgroud.patch)更新之前图片的新地址。
+

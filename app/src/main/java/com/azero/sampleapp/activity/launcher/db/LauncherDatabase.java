@@ -75,11 +75,11 @@ public abstract class LauncherDatabase extends RoomDatabase {
             log.d("create default recommendation list");
             //数据库为空时，创建默认界面
             List<Recommendation> recommendations = new ArrayList<>();
-            recommendations.add(new Recommendation(0, Recommendation.Type.TEMPLATE2, "每日天气预报", "“今天天气怎么样”", "http://52.81.85.56:8300/images/backgrounds/20190620154419.jpg", ""));
-            recommendations.add(new Recommendation(1, Recommendation.Type.TEMPLATE2, "经典老歌:带你回顾蔡琴的渡口", "“播放蔡琴的渡口”", "http://52.81.85.56:8300/images/backgrounds/20190620211830.jpg", ""));
-            recommendations.add(new Recommendation(2, Recommendation.Type.TEMPLATE2, "爆笑相声集:让你笑不停", "“播放相声”", "http://52.81.85.56:8300/images/backgrounds/20190620211913.jpg", ""));
-            recommendations.add(new Recommendation(3, Recommendation.Type.TEMPLATE2, "闹钟提醒:设定提醒，合理安排时间", "“下午四点提醒我取钱”", "http://52.81.85.56:8300/images/backgrounds/20190620211945.jpg", ""));
-            recommendations.add(new Recommendation(4, Recommendation.Type.TEMPLATE2, "垃圾分类:助你轻松归类生活垃圾", "“酸奶瓶是什么垃圾”", "http://52.81.85.56:8300/images/backgrounds/20190620212018.jpg", ""));
+            recommendations.add(new Recommendation(0, Recommendation.Type.TEMPLATE2, "每日天气预报", "“今天天气怎么样”", "https://cms-azero.soundai.cn:8443/v1/cmsservice/resource/e6c634f1dfcfb7d1072c74faf3f3db19.jpg", ""));
+            recommendations.add(new Recommendation(1, Recommendation.Type.TEMPLATE2, "经典老歌:带你回顾蔡琴的渡口", "“播放蔡琴的渡口”", "https://cms-azero.soundai.cn:8443/v1/cmsservice/resource/8a5438b57d63348624f9b6a4f5feefc9.jpg", ""));
+            recommendations.add(new Recommendation(2, Recommendation.Type.TEMPLATE2, "爆笑相声集:让你笑不停", "“播放相声”", "https://cms-azero.soundai.cn:8443/v1/cmsservice/resource/513ec1f20c77fd7ab796bc15b1d4e59a.jpg", ""));
+            recommendations.add(new Recommendation(3, Recommendation.Type.TEMPLATE2, "闹钟提醒:设定提醒，合理安排时间", "“下午四点提醒我取钱”", "https://cms-azero.soundai.cn:8443/v1/cmsservice/resource/19c0cf732375eaef5010bdc9391a7bf6.jpg", ""));
+            recommendations.add(new Recommendation(4, Recommendation.Type.TEMPLATE2, "垃圾分类:助你轻松归类生活垃圾", "“酸奶瓶是什么垃圾”", "https://cms-azero.soundai.cn:8443/v1/cmsservice/resource/0cdc9a70977d93312115284e0000d433.jpg", ""));
             mDao.insert(recommendations);
             return null;
         }
