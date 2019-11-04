@@ -93,4 +93,5 @@ Config config = new Config(
 ##  已知问题
 
 - Version 1.0.1及其之前版本中Launcher background图片可能会失效，届时您可选择自行替换其背景图片，也可选择试用[补丁](./patch/launcher_backgroud.patch)更新之前图片的新地址。
+- Azero 体验包中视频默认配置了蜜蜂视频App，如需体验视频交互，可以下载[公版蜜蜂视频](http://www.beevideo.tv/apk/bjPQbheOhd8%3D.html)体验；如需产品化，请联系我们获取支持。
 
