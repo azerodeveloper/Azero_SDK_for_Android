@@ -13,7 +13,7 @@ Azero for Android 可支持在绝大多数Android设备直接安装试用，可�
 * [更多技能](#more_skill)
 * [进阶集成和调优](#advanced)
 * [已知问题](#known_issue)
-* [已知问题](#download)
+* [下载](#download)
 
 ## 试用前提<a id="prerequisites"> </a>
 
