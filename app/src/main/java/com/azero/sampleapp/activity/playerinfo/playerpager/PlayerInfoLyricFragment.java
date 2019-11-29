@@ -40,7 +40,7 @@ public class PlayerInfoLyricFragment extends BasePlayerInfoFragment{
     private LyricView mLyricView;
     private LyricManager lyricManager;
     private int lineNum = -1;
-    private String name = "";
+    String lyricPath = "";
     public PlayerInfoLyricFragment() { }
 
     public static PlayerInfoLyricFragment newInstance(String template) {
@@ -91,9 +91,6 @@ public class PlayerInfoLyricFragment extends BasePlayerInfoFragment{
             if (template.has("provider")) {
                 // Set header subtext to provider name if no header subtext given
                 JSONObject provider = template.getJSONObject("provider");
-                if (provider.has("name")) {
-                    name = provider.getString("name");
-                }
             }
         } catch (JSONException e) {
             log.e(e.getMessage());
@@ -113,7 +110,6 @@ public class PlayerInfoLyricFragment extends BasePlayerInfoFragment{
                 break;
             case PushMessage.SETUP_LYRIC:
             case PushMessage.MEDIASTATE_PLAYING:
-                log.e("receiverUpdate***.setupLyric");
                 File file = pushMessage.getFile();
                 setupLyric(file);
                 break;
@@ -160,16 +156,15 @@ public class PlayerInfoLyricFragment extends BasePlayerInfoFragment{
     }
 
 
-    private void setLyricText(File file){
+    private void setLoadingLyricText(){
         log.d("clearLyricText***");
-        boolean isResult = setupLyric(file);
-        if (!isResult) {
-            String str = "暂无歌词";
+            String str = "歌词加载中...";
             SpannableStringBuilder stringBuilder = new SpannableStringBuilder(str);
             ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.WHITE);
             stringBuilder.setSpan(foregroundColorSpan, 0, str.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mLyricView.setText(stringBuilder);
-        }
+            if(mLyricView!=null){
+                mLyricView.setText(stringBuilder);
+            }
     }
 
     private void clearLyricText(){

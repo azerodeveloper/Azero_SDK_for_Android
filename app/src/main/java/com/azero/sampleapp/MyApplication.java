@@ -13,6 +13,8 @@
 
 package com.azero.sampleapp;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.support.multidex.MultiDexApplication;
 
 import com.azero.platforms.iface.config.AzeroConfiguration;
@@ -54,7 +56,6 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
         super.onCreate();
         instance = this;
         registerActivityLifecycleCallbacks(ActivityLifecycleManager.getInstance());
-        initAzero();
     }
 
     public static MyApplication getInstance() {
@@ -62,46 +63,48 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
     }
 
 
-    private void initAzero() {
-        //初始化
-        try {
-            //第一步 配置参数 注册必要模块 @{
-            Config config = new Config(
-                    "",         //productID 网站申请
-                    "",             //ClientID  网站申请
-                    Utils.getimei(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
-                    Config.SERVER.PRO,                              //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
-                    Setting.enableLocalVAD                          //localVAD  是否使用本地VAD
-            );
-            //定义界面消失时间，不填则使用如下默认值
-            config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
-                    //Template界面在TTS播放完后消失的时间
-                    new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_TTS_FINISHED_TIMEOUT, 8000),
-                    //音频播放完后界面消失时间
-                    new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_FINISHED_TIMEOUT, 300000),
-                    //音频播放暂停时界面消失时间
-                    new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_STOPPED_PAUSED_TIMEOUT, 300000)
-            });
+    public void initAzero() throws RuntimeException{
 
-            //初始化数据读取模块
-            AudioInputManager audioInputManager = new AudioInputManager(this, new SystemRecord());
-            audioInputManager.addWakeUpObserver(this);
-            //识别数据模块
-            SpeechRecognizerHandler speechRecognizerHandler = new SpeechRecognizerHandler(
-                    appExecutors,
-                    this,
-                    audioInputManager,
-                    true,
-                    true
-            );
+        //第一步 配置参数 注册必要模块 @{
+        Config config = new Config(
+                "",         //productID 网站申请
+                "",             //ClientID  网站申请
+                Utils.getimei(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
+                Config.SERVER.PRO,                              //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
+                Setting.enableLocalVAD                          //localVAD  是否使用本地VAD
+        );
+        //定义界面消失时间，不填则使用如下默认值
+        config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
+                //Template界面在TTS播放完后消失的时间
+                new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_TTS_FINISHED_TIMEOUT, 8000),
+                //音频播放完后界面消失时间
+                new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_FINISHED_TIMEOUT, 300000),
+                //音频播放暂停时界面消失时间
+                new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_STOPPED_PAUSED_TIMEOUT, 300000)
+        });
 
-            // 选择是否开启AndLink模块及和家固话模块
-            HandlerContainerBuilder.PHONE phone;
-            if (Setting.enableHjghAndAndLink) {
-                phone = HandlerContainerBuilder.PHONE.HEJIA;
-            } else {
-                phone = HandlerContainerBuilder.PHONE.PHONE;
-            }
+        //设置Azero的log级别
+        AzeroManager.getInstance().setDebug(true);
+
+        //初始化数据读取模块
+        AudioInputManager audioInputManager = new AudioInputManager(this, new SystemRecord());
+        audioInputManager.addWakeUpObserver(this);
+        //识别数据模块
+        SpeechRecognizerHandler speechRecognizerHandler = new SpeechRecognizerHandler(
+                appExecutors,
+                this,
+                audioInputManager,
+                true,
+                true
+        );
+
+        // 选择是否开启AndLink模块及和家固话模块
+        HandlerContainerBuilder.PHONE phone;
+        if (Setting.enableHjghAndAndLink) {
+            phone = HandlerContainerBuilder.PHONE.HEJIA;
+        } else {
+            phone = HandlerContainerBuilder.PHONE.PHONE;
+        }
 
             //选择和注册必要模块
             HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
@@ -115,7 +118,6 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
 
             //第二歩 启动引擎 @{
             AzeroManager.getInstance().startEngine(this, config, handlerContainer);
-            AzeroManager.getInstance().setDebug(true);
             //@}
 
             //自定义内容模块
@@ -137,12 +139,6 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
 
             // 初始化结束后自动连接和家固话，若未绑定则显示绑定界面
             AndLinkManager.getInstance(this).requestAndLinkAddress();
-
-        } catch (RuntimeException e) {
-            log.e("Could not start engine. Reason: " + e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void enableAndLinkAndHjgh(Config config, AudioInputManager audioInputManager) {
@@ -176,6 +172,15 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
     public void onTerminate() {
         super.onTerminate();
         AzeroManager.getInstance().release();
+    }
+
+    public void exit() {
+        try {
+            ActivityLifecycleManager.getInstance().finishAllActivity();
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.azero.sampleapp.activity.playerinfo.bean;
 
-public class LineBean {
+import android.support.annotation.NonNull;
+
+public class LineBean implements Comparable<LineBean>{
 
     private String content;
     private long start;
@@ -28,5 +30,23 @@ public class LineBean {
 
     public void setEnd(long end) {
         this.end = end;
+    }
+
+    @Override
+    public String toString() {
+        return "LineBean{" +
+                "content='" + content + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                '}';
+    }
+
+    @Override
+    public int compareTo(@NonNull LineBean lineBean) {
+        int i = (int) (this.getStart()-lineBean.getStart());
+        if(i==0){
+            return (int) (this.getEnd()-lineBean.getEnd());
+        }
+        return i;
     }
 }

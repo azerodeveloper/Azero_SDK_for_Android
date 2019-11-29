@@ -21,7 +21,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -73,8 +72,9 @@ public final class GlobalBottomBar extends LinearLayout {
     public static GlobalBottomBar getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (GlobalBottomBar.class) {
-                if (INSTANCE == null)
+                if (INSTANCE == null) {
                     INSTANCE = new GlobalBottomBar(context.getApplicationContext());
+                }
             }
         }
         return INSTANCE;
@@ -134,23 +134,29 @@ public final class GlobalBottomBar extends LinearLayout {
 
 
     public void show() {
-        show(null, 0);
+        show(null, 0, true);
     }
 
     public void show(@NonNull String text) {
-        show(text, 0);
+        show(text, 0, true);
     }
 
     public void show(long hideDelayMillis) {
-        show(null, hideDelayMillis);
+        show(null, hideDelayMillis, true);
     }
 
-    public void show(final String text, long hideDelayMillis) {
+    public void show(final String text, long hideDelayMillis, boolean showByWakeup) {
+        if (!showByWakeup) {
+            if (isShow) {
+                return;
+            }
+        }
         cancelHide = true;
         handler.removeCallbacksAndMessages(null);
 
-        if (windowManager == null)
+        if (windowManager == null) {
             return;
+        }
 
         if (isShow) {
             startHideAnimator(() -> startShowAnimator(text));
@@ -167,8 +173,9 @@ public final class GlobalBottomBar extends LinearLayout {
         cancelHide = true;
         handler.removeCallbacksAndMessages(null);
 
-        if (windowManager == null)
+        if (windowManager == null) {
             return;
+        }
 
         if (isShow) {
             startHideAnimator(null);
@@ -234,13 +241,17 @@ public final class GlobalBottomBar extends LinearLayout {
      * @return true:有权限； false:无权限
      */
     private boolean checkOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Settings.canDrawOverlays(getContext());
-        else return true;
+        } else {
+            return true;
+        }
     }
 
     private void startHideAnimator(final HideAnimatorCallback callback) {
-        if (isPlayingHideAnimation) return;
+        if (isPlayingHideAnimation) {
+            return;
+        }
         ObjectAnimator hideAnimator = ObjectAnimator
                 .ofFloat(rootView, "translationY", 0f, 200f)
                 .setDuration(400);
@@ -283,7 +294,4 @@ public final class GlobalBottomBar extends LinearLayout {
         void finishHide();
     }
 
-    public boolean isShow() {
-        return isShow;
-    }
 }

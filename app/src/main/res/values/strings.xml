@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Sample App</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Azero Sample</string>
 
     <!-- Actions -->
     <string name="action_tap_to_talk">Tap to Talk</string>
@@ -139,6 +139,11 @@
     <string name="preference_client_secret">4e6ea99a32eaec5189d76e4b2e33000800ea05c3a771890c952330de1896140f</string>
     <string name="preference_product_id">Soundaiboard</string>
     <string name="preference_product_dsn">123456</string>
+
+    <!-- Alert -->
+    <string name="alert_azero_init_failure">Azero init failure</string>
+    <string name="alert_azero_no_permission">系统权限未被允许， 请赋予权限后重新尝试！</string>
+
 
     <!--AndLink-->
     <string name="preference_file_soundai_key">com.soundai.SoundAISharedPreferences</string>

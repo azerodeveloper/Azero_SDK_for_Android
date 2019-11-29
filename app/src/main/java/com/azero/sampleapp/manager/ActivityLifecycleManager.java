@@ -24,13 +24,14 @@ import com.azero.sampleapp.activity.template.BaseDisplayCardActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 负责整个程序的生命周期管理
  */
 public class ActivityLifecycleManager implements Application.ActivityLifecycleCallbacks {
     private static Stack<Activity> activityStack = new Stack<>();
-    private static List<Activity> templateList = new ArrayList<>();
+    private static CopyOnWriteArrayList<Activity> templateList = new CopyOnWriteArrayList<>();
     private static List<Activity> playerInfoList = new ArrayList<>();
     private int mActivityCount = 0;
 
@@ -158,5 +159,17 @@ public class ActivityLifecycleManager implements Application.ActivityLifecycleCa
      */
     public boolean isAppForeground() {
         return mActivityCount > 0;
+    }
+
+    /**
+     * 结束所有的Activity
+     *
+     */
+    public void finishAllActivity(){
+        if (activityStack.size() > 0) {
+            for (Activity activity : activityStack) {
+                activity.finish();
+            }
+        }
     }
 }

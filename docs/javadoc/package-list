@@ -1,0 +1,5 @@
+com.azero.sdk
+com.azero.sdk.event
+com.azero.sdk.impl.SpeechRecognizer
+com.azero.sdk.impl.SpeechSynthesizer
+com.azero.sdk.impl.TemplateRuntime

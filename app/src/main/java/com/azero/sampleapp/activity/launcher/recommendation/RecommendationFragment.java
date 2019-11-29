@@ -137,7 +137,6 @@ public class RecommendationFragment extends Fragment {
                     mainTitle.setText(recommendation.getTitle());
                     subTitle.setText(recommendation.getIntroduce());
                 }
-                recommendationLayout.setVisibility(View.INVISIBLE);
                 recommendationLayout.setOnClickListener(v -> {
                     if (listener != null) {
                         listener.onClick(recommendation);

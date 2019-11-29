@@ -16,6 +16,7 @@ package com.azero.sampleapp.impl.audioinput.record;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 
 import com.azero.sdk.util.log;
 
@@ -28,9 +29,10 @@ import java.util.concurrent.RejectedExecutionException;
  *  由于获取不到回采数据，在播放音频时不易唤醒，仅供体验使用
  */
 public class SystemRecord extends Record {
-    // All audio input consumers expect PCM 16 data @ 16 Khz. We divide this consumption into 10 ms
-    // chunks. It comes out at 160 samples every 10 ms to reach 16000 samples (in a second).
-    private static final int sSamplesToCollectInOneCycle = 160;
+    // All audio input consumers expect PCM & 16bit & 16 Khz data. We divide this consumption into 10 ms
+    // chunks. If we use STEREO mic data , wen need add mimo reference channel which data is 0 . In result
+    // we need give two ch mic data + one ch ref data.
+    private static final int sSamplesToCollectInOneCycle = 160 * 2;
     private static final int sBytesInEachSample = 2; // PCM 16 = 2 bytes per sample
     private static final int sSampleRateInHz = 16000; //16 khz
     private static final int sAudioFramesInBuffer = 5; // Create large enough buffer for 5 audio frames.
@@ -75,14 +77,28 @@ public class SystemRecord extends Record {
         try {
             int minBufferSize = AudioRecord.getMinBufferSize(
                     sSampleRateInHz,
-                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.CHANNEL_IN_STEREO,
                     AudioFormat.ENCODING_PCM_16BIT);
             int bufferSize = minBufferSize + (
                     sAudioFramesInBuffer * sSamplesToCollectInOneCycle * sBytesInEachSample);
-            audioRecord = new AudioRecord(
-                    MediaRecorder.AudioSource.MIC, sSampleRateInHz,
-                    AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
-                    bufferSize);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                AudioFormat audioFormat = new AudioFormat.Builder()
+                        .setSampleRate(sSampleRateInHz)
+                        .setChannelMask(AudioFormat.CHANNEL_IN_STEREO)
+                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                        .build();
+                audioRecord = new AudioRecord.Builder()
+                        .setAudioFormat(audioFormat)
+                        .setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION)
+                        .setBufferSizeInBytes(bufferSize)
+                        .build();
+            } else {
+                audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                        sSampleRateInHz,
+                        AudioFormat.CHANNEL_IN_STEREO,
+                        AudioFormat.ENCODING_PCM_16BIT,
+                        bufferSize);
+            }
         } catch (IllegalArgumentException e) {
             log.e("Cannot create audio input. Error: "
                     + e.getMessage());
@@ -97,7 +113,7 @@ public class SystemRecord extends Record {
 
         private boolean mRunning = true;
         private byte[] mBuffer = new byte[sSamplesToCollectInOneCycle * sBytesInEachSample];
-        private byte[] mBuffer2 = new byte[sSamplesToCollectInOneCycle * sBytesInEachSample * 2];
+        private byte[] mBuffer2 = new byte[(int)(sSamplesToCollectInOneCycle * sBytesInEachSample * 1.5)];
 
         void cancel() {
             mRunning = false;
@@ -115,15 +131,19 @@ public class SystemRecord extends Record {
                 size = mAudioInput.read(mBuffer, 0, mBuffer.length);
                 if (size > 0 && mRunning && listener != null) {
                     // 算法库至少需要一路回采数据
-                    // 为单通道数据添加一个空的回采通道
-                    for (int i = 0; i < size * 2; i += 2) {
-                        if (i % 4 == 0) {
-                            mBuffer2[i] = mBuffer[i / 2];
-                            mBuffer2[i + 1] = mBuffer[i / 2 + 1];
-                        }
+                    // 为双通道数据添加一个空的回采通道
+                    for (int i = 0,j = 0; i < size; i += 4,j += 6) {
+                        mBuffer2[j] = mBuffer[i];
+                        mBuffer2[j+1] = mBuffer[i+1];
+                        mBuffer2[j+2] = mBuffer[i+2];
+                        mBuffer2[j+3] = mBuffer[i+3];
+                        mBuffer2[j+4] = (byte) 0;
+                        mBuffer2[j+5] = (byte) 0;
                     }
+                    byte[] data = new byte[(int)(size * 1.5)];
+                    System.arraycopy(mBuffer2,0,data,0,data.length);
 
-                    listener.onData(mBuffer2, size * 2);
+                    listener.onData(data, data.length);
                 }
             }
         }

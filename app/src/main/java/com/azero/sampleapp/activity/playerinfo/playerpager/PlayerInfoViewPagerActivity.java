@@ -76,7 +76,6 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
     @Override
     protected void initView() {
         super.initView();
-        log.w("initView****");
         downloadHelper = DownloadHelper.getInstance();
         ImageButton mBtnBack = findViewById(R.id.ibtn_back);
         mHeader = findViewById(R.id.header);
@@ -107,6 +106,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
 
             @Override
             public void onPageSelected(int position) {
+                clearShowLyric();
                 if(position==1){
                     EventBus.getDefault().post(new PushMessage(PushMessage.UPDATE_LYRIC));
                     mHeader.setVisibility(View.VISIBLE);
@@ -154,7 +154,6 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
             @Override
             public void onMediaStateChange(String playerName, MediaPlayer.MediaState mediaState) {
                 log.e("onMediaStateChange*********"+mediaState);
-                EventBus.getDefault().post(new PushMessage(PushMessage.MEDIASTATE_PLAYING));
                 PushMessage pushMessage = new PushMessage(PushMessage.MEDIASTATE_PLAYING);
                 pushMessage.setFile(lyricFile);
                 EventBus.getDefault().post(pushMessage);
@@ -186,6 +185,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
 
     @Override
     protected void initData(Intent intent) {
+        clearShowLyric();
         mViewPager.setCurrentItem(0);
         mHeader.setVisibility(View.GONE);
         String data = intent.getStringExtra(Constant.EXTRA_TEMPLATE);
@@ -226,14 +226,11 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
                 if (provider.has("lyric")) {
                     lyricUrl = provider.getString("lyric");
                     String fileName = lyricUrl.substring(lyricUrl.lastIndexOf("/"));
-                    if(!lyricUrl.endsWith(".txt")){
-                        hasLyrics = true;
-                        playerInfoPagerAdapter.setPageCount(2);
-                        String pathName = FileUtils.getExternalStorageDirectory();
-                        downloadHelper.download(lyricUrl, pathName,fileName, this);
-                    }else{
-                        sendClearLyricMsg();
-                    }
+                    hasLyrics = true;
+                    playerInfoPagerAdapter.setPageCount(2);
+                    String pathName = FileUtils.getExternalStorageDirectory();
+                    downloadHelper.download(lyricUrl, pathName,fileName, this);
+
                 }else{
                     sendClearLyricMsg();
                 }
@@ -323,6 +320,12 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         }
     }
 
+    public void clearShowLyric(){
+        if(compositeDisposable!=null){
+            compositeDisposable.clear();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -335,8 +338,6 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         if(mMediaPlayer!=null&&mediaStateChangeListener!=null){
             mMediaPlayer.removeOnMediaStateChangeListener(mediaStateChangeListener);
         }
-        if(compositeDisposable!=null){
-            compositeDisposable.clear();
-        }
+        clearShowLyric();
     }
 }

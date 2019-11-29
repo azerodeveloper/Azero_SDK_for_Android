@@ -208,7 +208,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
                 break;
             case "PLAY_PAUSE":
                 mControlPlayPause.setEnabled(enabled);
-                mControlPlayPause.setSelected(selected);
+                mControlPlayPause.setChecked(selected);
                 break;
             case "NEXT":
                 mControlNext.setEnabled(enabled);

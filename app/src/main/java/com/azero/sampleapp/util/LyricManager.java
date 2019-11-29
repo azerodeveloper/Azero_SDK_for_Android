@@ -1,4 +1,17 @@
 
+/*
+ * Copyright (c) 2019 SoundAI. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.azero.sampleapp.util;
 
 import android.content.Context;
@@ -22,8 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 public class LyricManager {
@@ -49,15 +61,8 @@ public class LyricManager {
      * @param inputStream 歌词文件的输入流
      */
     public void setFileStream(final InputStream inputStream) {
-        log.d("setFileStream***");
         if (null != inputStream) {
-            new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    decode(inputStream);
-                }
-            }).start();
+            new Thread(() -> decode(inputStream)).start();
         } else {
             lyricBean = null;
         }
@@ -80,7 +85,6 @@ public class LyricManager {
      * 根据输入流解析转码成歌词
      */
     private void decode(InputStream inputStream) {
-        log.d("decode***");
         try {
             String line;
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
@@ -89,12 +93,12 @@ public class LyricManager {
             while ((line = bufferedReader.readLine()) != null) {
                 analyzeLyric(line);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
+            bufferedReader.close();
             inputStream.close();
-        } catch (IOException e) {
+            if(lyricBean.getLines().size()>0){
+                Collections.sort(lyricBean.getLines());
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         setCurrentTimeMillis(0);
@@ -105,36 +109,72 @@ public class LyricManager {
      *  防止出现乱码问题
      */
     private BufferedReader getReader(BufferedInputStream bufferedInputStream)throws IOException{
-        BufferedReader reader = null;
-        bufferedInputStream.mark(4);
+        String charset = "GBK";
         byte[] first3bytes = new byte[3];
-        bufferedInputStream.read(first3bytes);
-        bufferedInputStream.reset();
-        if (first3bytes[0] == (byte) 0xEF && first3bytes[1] == (byte) 0xBB
-                && first3bytes[2] == (byte) 0xBF) {// utf-8
-            log.e("Lyric text type = utf-8");
-            reader = new BufferedReader(new InputStreamReader(bufferedInputStream, "UTF-8"));
+        boolean checked = false;
+        try {
+           bufferedInputStream.mark(-1);
+            int read = bufferedInputStream.read(first3bytes);
+            if(read==-1){
+                bufferedInputStream.reset();
+                return new BufferedReader(new InputStreamReader(bufferedInputStream, charset));
+            }
+            if (first3bytes[0] == (byte) 0xEF && first3bytes[1] == (byte) 0xBB
+                    && first3bytes[2] == (byte) 0xBF) {// utf-8
+                log.e("Lyric text type = utf-8");
+                checked = true;
+                charset = "UTF-8";
 
-        } else if (first3bytes[0] == (byte) 0xFF
-                && first3bytes[1] == (byte) 0xFE) {
-            log.e("Lyric text type = utf-unicode");
-            reader = new BufferedReader(
-                    new InputStreamReader(bufferedInputStream, "unicode"));
-        } else if (first3bytes[0] == (byte) 0xFE
-                && first3bytes[1] == (byte) 0xFF) {
-            log.e("Lyric text type = utf-16be");
-            reader = new BufferedReader(new InputStreamReader(bufferedInputStream,
-                    "utf-16be"));
-        } else if (first3bytes[0] == (byte) 0xFF
-                && first3bytes[1] == (byte) 0xFF) {
-            log.e("Lyric text type = utf-16le");
-            reader = new BufferedReader(new InputStreamReader(bufferedInputStream,
-                    "utf-16le"));
-        } else {
-            log.e("Lyric text type = GBK");
-            reader = new BufferedReader(new InputStreamReader(bufferedInputStream, "UTF-8"));
+            } else if (first3bytes[0] == (byte) 0xFF
+                    && first3bytes[1] == (byte) 0xFE) {
+                log.e("Lyric text type = utf-unicode");
+                charset = "unicode";
+                checked = true;
+            } else if (first3bytes[0] == (byte) 0xFE
+                    && first3bytes[1] == (byte) 0xFF) {
+                log.e("Lyric text type = utf-16be");
+                charset = "UTF-16BE";
+                checked = true;
+            } else if (first3bytes[0] == (byte) 0xFF
+                    && first3bytes[1] == (byte) 0xFF) {
+                charset = "UTF-16LE";
+                checked = true;
+            }
+            bufferedInputStream.reset();
+            if(!checked){
+                while((read = bufferedInputStream.read())!=-1){
+                    if(read>= 0xF0){
+                        break;
+                    }
+                    if (0x80 <= read && read <= 0xBF)
+                        break;
+                    if (0xC0 <= read && read <= 0xDF) {
+                        read = bufferedInputStream.read();
+                        if (0x80 <= read && read <= 0xBF)
+                            continue;
+                        else
+                            break;
+                    }else if (0xE0 <= read) {
+                        read = bufferedInputStream.read();
+                        if (0x80 <= read && read <= 0xBF) {
+                            read = bufferedInputStream.read();
+                            if (0x80 <= read && read <= 0xBF) {
+                                charset = "UTF-8";
+                                break;
+                            } else
+                                break;
+                        } else
+                            break;
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return reader;
+        log.e("lyric charset ***********"+charset);
+        bufferedInputStream.reset();
+        return new BufferedReader(new InputStreamReader(bufferedInputStream, charset));
     }
     /**
      * 逐行解析歌词文件
@@ -142,48 +182,58 @@ public class LyricManager {
     private void analyzeLyric(String line) {
         log.e("Lyric line"+line);
         try {
+            if(line==null){
+                return;
+            }
             LineBean lineBean = new LineBean();
+            //[04:05.02][03:43.28][01:46.88]在春天里摇摆
+            String[] timestampStr = line.split("]");//判断时间戳的个数
             int index = line.lastIndexOf("]");
-            if (line != null && line.startsWith("[offset:")) {
+            if(index==-1){//兼容没有时间戳的歌词
+                lineBean.setContent(line);
+                lineBean.setStart(1000);
+                lyricBean.getLines().add(lineBean);
+                return;
+            }
+            if (line.startsWith("[offset:")) {
                 // 时间偏移量
                 String string = line.substring(8, index).trim();
                 lyricBean.setOffset(Long.parseLong(string));
                 return;
             }
-            if (line != null && line.startsWith("[ti:")) {
+            if (line.startsWith("[ti:")) {
                 // title 标题
                 String string = line.substring(4, index).trim();
                 lyricBean.setTitle(string);
                 return;
             }
-            if (line != null && line.startsWith("[ar:")) {
+            if (line.startsWith("[ar:")) {
                 // artist 作者
                 String string = line.substring(4, index).trim();
                 lyricBean.setArtist(string);
                 return;
             }
-            if (line != null && line.startsWith("[al:")) {
+            if (line.startsWith("[al:")) {
                 // album 所属专辑
                 String string = line.substring(4, index).trim();
                 lyricBean.setAlbum(string);
                 return;
             }
-            if (line != null && line.startsWith("[by:")) {
+            if (line.startsWith("[by:")) {
                 return;
             }
-            if (line != null && index == 9 && line.trim().length() > 10) {
-                // 歌词内容
-                lineBean.setContent(line.substring(10, line.length()));
-                lineBean.setStart(analyzeStartTimeMillis(line.substring(0, 10)));
-                lyricBean.getLines().add(lineBean);
-            }
 
-            //兼容不同的时间戳格式
-            if (line != null && index == 10 && line.trim().length() > 11) {
-                // 歌词内容
-                lineBean.setContent(line.substring(11, line.length()));
-                lineBean.setStart(analyzeStartTimeMillis(line.substring(0, 11)));
-                lyricBean.getLines().add(lineBean);
+            if(timestampStr.length>1){
+                for(int i=0;i<timestampStr.length-1;i++){
+                    LineBean lineBeans = new LineBean();
+                    String temp = timestampStr[i];
+                    String[] time = temp.split("\\[");
+                    lineBeans.setStart(analyzeStartTimeMillis(time[1]));
+                    if((index+1)<=line.length()){
+                        lineBeans.setContent(line.substring(index+1));
+                    }
+                    lyricBean.getLines().add(lineBeans);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -194,10 +244,19 @@ public class LyricManager {
      * 从字符串中获得时间值
      */
     private long analyzeStartTimeMillis(String str) {
-        long minute = Long.parseLong(str.substring(1, 3));
-        long second = Long.parseLong(str.substring(4, 6));
-        long millisecond = Long.parseLong(str.substring(7, 9));
-        return millisecond + second * 1000 + minute * 60 * 1000;
+        try {
+            String[] s1 = str.split(":");
+            long minute = Long.parseLong(s1[0]);
+            String[] s2 = s1[1].split("\\.");
+            long second = Long.parseLong(s2[0]);
+            long millisecond = 0;
+            if(s2.length>1){
+                millisecond = Long.parseLong(s2[1]);
+            }
+            return millisecond + second * 1000 + minute * 60 * 1000;
+        }catch (Exception e){
+            return -1;
+        }
     }
 
     /**
@@ -209,55 +268,51 @@ public class LyricManager {
         try {
             final List<LineBean> lines = lyricBean != null ? lyricBean.getLines() : null;
             if (lines != null) {
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            int position = 0;
-                            SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
-                            for (int i = 0, size = lines.size(); i < size; i++) {
-                                if (lines.get(i).getStart() < timeMillis) {
-                                    position = i;
-                                } else {
-                                    break;
-                                }
+                new Thread(() -> {
+                    try {
+                        int position = 0;
+                        SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
+                        for (int i = 0, size = lines.size(); i < size; i++) {
+                            if (lines.get(i).getStart() < timeMillis) {
+                                position = i;
+                            } else {
+                                break;
                             }
-                            if (position == flag_position && !flag_refresh) {
-                                return;
-                            }
-                            flag_position = position;
-                            for (int i = 0, size = lines.size(); i < size; i++) {
-                                if (i != position) {
-                                    ForegroundColorSpan span = new ForegroundColorSpan(normalColor);
-                                    String line = lines.get(i).getContent();
-                                    SpannableString spannableString = new SpannableString(line + "\n");
-                                    spannableString.setSpan(span, 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                                    stringBuilder.append(spannableString);
-                                } else {
-                                    ForegroundColorSpan span = new ForegroundColorSpan(selectedColor);
-                                    String line = lines.get(i).getContent();
-                                    SpannableString spannableString = new SpannableString(line + "\n");
-                                    spannableString.setSpan(span, 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                                    stringBuilder.append(spannableString);
-                                }
-                            }
-                            Message message = new Message();
-                            message.what = 0x159;
-                            DataHolder dataHolder = new DataHolder();
-                            dataHolder.builder = stringBuilder;
-                            dataHolder.position = position;
-                            dataHolder.refresh = flag_refresh;
-                            dataHolder.lines = lines;
-                            message.obj = dataHolder;
-                            handler.sendMessage(message);
-
-                            if (flag_refresh) {
-                                flag_refresh = false;
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
                         }
+                        if (position == flag_position && !flag_refresh) {
+                            return;
+                        }
+                        flag_position = position;
+                        for (int i = 0, size = lines.size(); i < size; i++) {
+                            if (i != position) {
+                                ForegroundColorSpan span = new ForegroundColorSpan(normalColor);
+                                String line = lines.get(i).getContent();
+                                SpannableString spannableString = new SpannableString(line + "\n");
+                                spannableString.setSpan(span, 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                                stringBuilder.append(spannableString);
+                            } else {
+                                ForegroundColorSpan span = new ForegroundColorSpan(selectedColor);
+                                String line = lines.get(i).getContent();
+                                SpannableString spannableString = new SpannableString(line + "\n");
+                                spannableString.setSpan(span, 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                                stringBuilder.append(spannableString);
+                            }
+                        }
+                        Message message = new Message();
+                        message.what = 0x159;
+                        DataHolder dataHolder = new DataHolder();
+                        dataHolder.builder = stringBuilder;
+                        dataHolder.position = position;
+                        dataHolder.refresh = flag_refresh;
+                        dataHolder.lines = lines;
+                        message.obj = dataHolder;
+                        handler.sendMessage(message);
+
+                        if (flag_refresh) {
+                            flag_refresh = false;
+                        }
+                    }catch(Exception e){
+                        e.printStackTrace();
                     }
                 }).start();
             } else {
@@ -319,9 +374,9 @@ public class LyricManager {
      *
      * */
     public interface OnProgressChangedListener {
-        public void onProgressChanged(String singleLine, boolean refresh);
+        void onProgressChanged(String singleLine, boolean refresh);
 
-        public void onProgressChanged(SpannableStringBuilder stringBuilder, int lineNumber, boolean refresh);
+        void onProgressChanged(SpannableStringBuilder stringBuilder, int lineNumber, boolean refresh);
     }
 
     /**

@@ -28,12 +28,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextClock;
 import android.widget.Toast;
 
+import com.azero.sampleapp.MyApplication;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.Setting;
 import com.azero.sampleapp.activity.controller.LocalViewController;
@@ -41,8 +43,8 @@ import com.azero.sampleapp.activity.controller.TemplateViewController;
 import com.azero.sampleapp.activity.launcher.viewmodel.LauncherViewModel;
 import com.azero.sampleapp.impl.andcallcontroller.AndCallViewControllerHandler;
 import com.azero.sampleapp.util.Utils;
-import com.azero.sdk.AzeroEvent;
 import com.azero.sdk.AzeroManager;
+import com.azero.sdk.event.AzeroEvent;
 import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
 import com.azero.sdk.impl.TemplateRuntime.TemplateDispatcher;
 import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
@@ -69,7 +71,8 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
 
     private static final String sDeviceConfigFile = "app_config.json";
     private static final int sPermissionRequestCode = 0;
-    private static final String[] sRequiredPermissions = {Manifest.permission.RECORD_AUDIO,
+    private static final String[] sRequiredPermissions = {
+            Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -94,13 +97,18 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
             ActivityCompat.requestPermissions(this,
                     requests.toArray(new String[requests.size()]), sPermissionRequestCode);
         } else {
-            create();
+            try {
+                MyApplication.getInstance().initAzero();
+                create();
+            }catch (RuntimeException e){
+                Utils.showAlertDialog(this,getString(R.string.alert_azero_init_failure), "Could not start engine. Reason: \n"
+                        + e.getMessage());
+            }
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void create() {
-        log.d("imei: " + Utils.getimei(this));
         setContentView(R.layout.activity_launcher);
         initViewModel();
         TextClock textClock = findViewById(R.id.clock);
@@ -132,19 +140,20 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == sPermissionRequestCode) {
+            boolean any_denied = false;
             if (grantResults.length > 0) {
-                for (int grantResult : grantResults) {
-                    if (grantResult == PackageManager.PERMISSION_DENIED) {
-                        // Permission request was denied
-                        Toast.makeText(this, "Permissions required",
-                                Toast.LENGTH_LONG).show();
+                for (int i=0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        any_denied = true;
+                        Utils.showAlertDialog(this,getString(R.string.alert_azero_init_failure), permissions[i] + getString(R.string.alert_azero_no_permission));
                     }
                 }
-                // Permissions have been granted. Start app
-                create();
+                if (!any_denied) {
+                    MyApplication.getInstance().initAzero();
+                    create();
+                }
             } else {
-                // Permission request was denied
-                Toast.makeText(this, "Permissions required", Toast.LENGTH_LONG).show();
+                Utils.showAlertDialog(this,getString(R.string.alert_azero_init_failure), getString(R.string.alert_azero_no_permission));
             }
         }
     }

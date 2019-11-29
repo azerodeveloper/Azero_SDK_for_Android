@@ -66,7 +66,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     public boolean startAudioInput() {
         log.d("startAudioInput");
         beginTime = System.currentTimeMillis();
-        showWakeupDialog();
+        showWakeupDailogByAudioInput();
         return mAudioInputManager.startAudioInput(this);
     }
 
@@ -106,9 +106,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
      * TapToTalk唤醒模式，唤醒后由云端下发识别结束事件，被动停止识别。
      */
     public void onTapToTalk() {
-        if (GlobalBottomBar.getInstance(mContext).isShow()) {
-            showWakeupDialog();
-        }
+        showWakeupDailogByAudioInput();
         if (tapToTalk()) {
             mAudioCueObservable.playAudioCue(AudioCueState.START_TOUCH);
         }
@@ -118,9 +116,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
      * HoldToTalk唤醒模式，按下按钮识别内容，松开后停止识别。由本地控制识别内容长度，主动停止识别。
      */
     public void onHoldToTalk() {
-        if (GlobalBottomBar.getInstance(mContext).isShow()) {
-            showWakeupDialog();
-        }
+        showWakeupDialogByWakeup();
         if (holdToTalk()) {
             mAllowStopCapture = true;
             mAudioCueObservable.playAudioCue(AudioCueState.START_TOUCH);
@@ -163,10 +159,17 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
 
 
     /**
-     * 弹出唤醒提示框
+     * 通过唤醒弹出唤醒提示框
      */
-    private void showWakeupDialog() {
-        appExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).show("", 0));
+    private void showWakeupDialogByWakeup() {
+        appExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).show("", 0, true));
+    }
+
+    /**
+     * 多轮中弹出唤醒提示框
+     */
+    private void showWakeupDailogByAudioInput() {
+        appExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).show("", 0, false));
     }
 
     /**

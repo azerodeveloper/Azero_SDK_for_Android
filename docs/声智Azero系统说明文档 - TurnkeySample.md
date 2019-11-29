@@ -1,12 +1,13 @@
-# 声智Azero系统说明文档 - TurnkeySample
+# 声智Azero系统说明文档
 
 [TOC]
 
 # 版本说明
 
-| 更新日期 | 更新内容 |
-| :------: | :------: |
-| 2019/8/1 |   初版   |
+|  更新日期  | 更新内容 |
+| :--------: | :------: |
+|  2019/8/1  |  v1.0.0  |
+| 2019/11/29 |  v1.2.0  |
 
 
 
@@ -14,7 +15,7 @@
 
 ![](./1.png)
 
-​	TurnkeySample提供Azero系统接入示例代码，包含语音唤醒、ASR、NLP、用户交互解决方案等。您可以通过此文档理解Azero系统的架构设计，获知各个模块的详细使用说明以及如何开发和使用自定义技能。
+Azero Sample提供Azero系统接入示例代码，包含语音唤醒、ASR、NLP、用户交互解决方案等。您可以通过此文档理解Azero系统的架构设计，获知各个模块的详细使用说明以及如何开发和使用自定义技能。
 
 
 
@@ -69,74 +70,104 @@ Directive接收类需要预先实现CapabilityConfigurationInterface和Capabilit
 
 # 三、Azero接入
 
-## 快速上手
+## 导入工程
 
-使用Android Studio打开`turnkeysamples`工程。首次打开需要等待 Gradle 联网下载一些依赖库，可能需要较长时间，需要保持网络畅通。
+使用Android Studio打开`Azero_SDK_for_Android`工程。首次打开需要等待 Gradle 联网下载一些依赖库，可能需要较长时间，需要保持网络畅通。
 
-连上开发设备，运行turnkeysamples工程。这就是一个最基础的 Azero OS设备端实现。
-
-
-
-### 启动Azero
-
-启动时需要传入一些必要配置（Config）和功能模块（HandlerContainer）
-
-**HandlerContainer**
-
-`HandlerContainer`主要用于注册和替换自定义的播放器以及注册必要的Handler，SpeechRecognizerHandler是用于灌入识别数据的重要模块,为避免影响整个系统的使用，我们将其定义为必备模块，并且禁止为空。
+连上开发设备，运行`Azero_SDK_for_Android`工程, 并安装到设备。这就是一个最基础的 Azero OS设备端实现。
 
 
 
-`public HandlerContainerBuilder setVideoHandler(VIDEO type)`
+## 启动Azero
 
-以`VideoHandler`为例，我们预置了蜜蜂视频和咪咕视频的选项，如果想使用蜜蜂视频作为AzeroOS的视频播放器，请先在开发者网站中选择视频播放器为蜜蜂视频，端上设置`VideoHandler`为`MIFENG`，并安装配套的蜜蜂视频APK。
+启动Azero需要传入一些必要设备配置（Config）和功能模块（HandlerContainer）
 
-`public HandlerContainerBuilder setVideoHandler(LocalMediaSource localMediaSource)`
+### Config
 
-如果不想使用预置的视频播放器，并且自己有能力接入其他合作方的视频播放器，可以实现`LocalMediaSource`提供的接口后，通过此接口传入。
+`Config` 是设备基本信息配置类，主要包括以下主要信息：
+
+- **productId** 产品ID，Azero开发者网站上申请，设备信息中填写
+- **clientId** Azero开发者网站上自动生成，设备信息页可查询
+- **devicesn** 设备唯一标识，需保证该ID唯一且不能为空，示例中Utils.getimei(this)仅仅以手机imei为实例作为devicesn的一种实现方式
+- **server** 此选项默认Config.SERVER.PRO,为当前的线上server , 除非特殊联调情况，请勿使用其他选项，否则会存在无法使用的情况
+- **enableLocalVAD** 是否启用本地vad检测，默认启用
+- **setTimeoutList** 设置Template过期消失时间，设置过期时间之后，template将在过期时间后自动消失，具体请参考示例代码
+
+示例代码如下：
+
+```java
+//第一步 配置参数 注册必要模块 @{
+Config config = new Config(
+        "speaker_display_music_test",           //productID 网站申请
+        "5d71d046f3745100064ae275",             //ClientID  网站申请
+        Utils.getimei(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
+        Config.SERVER.PRO,                      //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
+        Setting.enableLocalVAD                  //localVAD  是否使用本地VAD
+);
+//定义界面消失时间，不填则使用如下默认值
+config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
+        //Template界面在TTS播放完后消失的时间
+        new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_TTS_FINISHED_TIMEOUT, 8000),
+        //音频播放完后界面消失时间
+        new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_FINISHED_TIMEOUT, 300000),
+        //音频播放暂停时界面消失时间
+        new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_STOPPED_PAUSED_TIMEOUT, 300000)
+});
+```
+
+
+### HandlerContainer
+
+`HandlerContainer`主要用于注册和替换自定义的播放器以及注册必要的Handler, 如SpeechRecognizerHandler是用于灌入识别数据的重要模块,为避免影响整个系统的使用，我们将其定义为必备模块，并且禁止为空。
+
+配置项主要包含：
+
+- setVideoHandler 视频类Handler, 当前支持蜜蜂视频（默认）、爱奇艺、优酷等, 这些第三方视频app 均需另行安装。
+
+- setAudioHandler 有声类Handler, 当前支持SoundAI自有有声，无需另行安装
+- setMusicHandler 音乐类Handler, 当前支持SoundAI自有音乐（默认）和咪咕音乐（需另行安装并联系我们授权）
+- setSpeechRecognizer 识别数据模块，**必须**
+
+以`VideoHandler`为例，如想体验蜜蜂视频除了配置 HandlerContainer 中VideoHandler，还需要在Azero官网上为你填写的设备配置对应的蜜蜂视频技能。
 
 **注：**HandlerContainer同一类别模块只支持注册一个，同时注册多个时，选择最后注册的模块。
 
+示例代码如下：
+
+```java
+//初始化数据读取模块
+AudioInputManager audioInputManager = new AudioInputManager(this);  
+audioInputManager.addWakeUpObserver(this);
+//识别数据模块
+SpeechRecognizerHandler speechRecognizerHandler = new SpeechRecognizerHandler(
+         appExecutors,
+         this,
+         audioInputManager,
+         true,
+         true
+);
+//选择和注册必要模块
+HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
+         .setAudioHandler(HandlerContainerBuilder.AUDIO.SOUNDAI)
+         .setMusicHandler(HandlerContainerBuilder.MUSIC.MIGU)
+         .setVideoHandler(HandlerContainerBuilder.VIDEO.MIFENG)
+         .setSpeechRecognizer(speechRecognizerHandler)
+         .create();
+
 ```
+
+### 启动Azero
+配置完上述的参数，就可以初始化Azero。
+```java
 try {
-     Config config = new Config(
-             "speaker_wunuo",              //productID 网站申请
-             "5ce4b239bf13cc663624fc83",   //ClientID  网站申请
-             "test123456",                 //DeviceSN  传入Mac地址或IMEI号，必须保证设备唯一
-             Config.SERVER.FAT,            //Server    选择使用的服务器 
-                                                        FAT 测试环境
-                                                        PRO 正式环境
-             true                          //localVAD  是否使用本地VAD
-     );
-     //初始化数据读取模块
-     AudioInputManager audioInputManager = new AudioInputManager(this);  
-     audioInputManager.addWakeUpObserver(this);
-     //识别数据模块
-     SpeechRecognizerHandler speechRecognizerHandler = new SpeechRecognizerHandler(
-             appExecutors,
-             this,
-             audioInputManager,
-             true,
-             true
-     );
-     //选择和注册必要模块
-     HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
-             .setAudioHandler(HandlerContainerBuilder.AUDIO.SOUNDAI)
-             .setMusicHandler(HandlerContainerBuilder.MUSIC.MIGU)
-             .setVideoHandler(HandlerContainerBuilder.VIDEO.MIFENG)
-             .setSpeechRecognizer(speechRecognizerHandler)
-             .create();
      //启动引擎
      AzeroManager.getInstance().startEngine(this, config, handlerContainer);
-     //自定义内容模块
-     AzeroExpress azeroExpressHandler = new AzeroExpressHandler(appExecutors, this);
-     AzeroManager.getInstance().setCustomAgent(azeroExpressHandler);
 } catch (RuntimeException e) {
     log.e("Could not start engine. Reason: " + e.getMessage());
 }
 ```
 
-至此，你已经可以使用AzeroOS的全部语音交互功能。为了达到更好的交互体验，需要配合界面显示。
+初始化过程异常已通过RuntimeException异常抛出，可通过捕获该异常情况获取初始化过程异常信息。
 
 ### 渲染Template
 
@@ -293,7 +324,7 @@ public AzeroExpress getCustomAgent()
 
 # 五、Open Denoise
 
-Azero turnkey sample 中默认配置了声智自有的声学算法Open Denoise，支持远场麦克风阵列的降噪、唤醒、AEC等，无需做任何改动即可使用。
+Azero Sample中默认配置了声智自有的声学算法Open Denoise，支持远场麦克风阵列的降噪、唤醒、AEC等，无需做任何改动即可使用。
 
 Open Denoise模块的数据入口为feedData函数，该函数需要客户将设备上的远场多路数据灌入到Open Denoise，当前工程中默认配置了Android标准接口采集的近场单mic数据可进行初始调试和近场演示使用，如需配置远场数据，需要客户自行打通多路mic加回采的数据链路，并将16k 16bit的pcm数据feed进来，或者您可以选择使用声智开源的basex数据采集工具来完成原始数据的采集工作，具体可参考下一章节内容。
 
@@ -362,6 +393,38 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
 5. #### 初始化SDK
 
    调用SaiClient.init函数初始化SDK
+
+   初始化SDK时，需要从Azero SDK 中获取token:
+
+   ```java
+   AzeroManager.getInstance().generateToken()
+   ```
+
+   初始化示例如下所示：
+
+   ```java
+   saiClient.init( context,
+                   true,
+                   configPath,
+                   "uuid",
+                   AzeroManager.getInstance().generateToken(),
+                   new SaiClient.Callback() {
+                       @Override
+                       public void onAsrDataCallback(byte[] data, int size) {
+                       }
+                       @Override
+                       public void onVoipDataCallback(byte[] bytes, int size) {
+                       }
+                       @Override
+                       public void onWakeupCallback(float wakeup_angle, String wakeup_word, float score, byte[] data) {
+                       }
+                       @Override
+                       public void onVadCallback(int vadResult) {
+                       }
+                   }
+   ```
+
+   
 
 6. #### 注册回调接口，接受并处理回调事件
 

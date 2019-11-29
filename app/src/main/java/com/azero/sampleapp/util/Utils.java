@@ -16,8 +16,10 @@ package com.azero.sampleapp.util;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
@@ -29,6 +31,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.azero.sampleapp.MyApplication;
 import com.azero.sampleapp.manager.ActivityLifecycleManager;
 
 import java.io.BufferedReader;
@@ -44,6 +47,8 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
+import androidx.annotation.RequiresApi;
 
 public class Utils {
 
@@ -328,5 +333,19 @@ public class Utils {
             return className.equals(cpn.getClassName());
         }
         return false;
+    }
+
+    public static void showAlertDialog(Context context, String title , String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message)
+                .setTitle(title);
+        builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                MyApplication.getInstance().exit();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

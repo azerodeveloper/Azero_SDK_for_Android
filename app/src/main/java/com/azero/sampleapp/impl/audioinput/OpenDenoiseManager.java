@@ -136,7 +136,7 @@ public class OpenDenoiseManager {
                 true,
                 configPath,
                 "ViewPageHelper",
-                AzeroManager.getInstance().generateToken(),
+                AzeroManager.getInstance().generateToken(context),
                 new SaiClient.Callback() {
                     @Override
                     public void onAsrDataCallback(byte[] data, int size) {
