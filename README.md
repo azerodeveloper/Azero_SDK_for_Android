@@ -35,7 +35,7 @@ Azero for Android 可支持在绝大多数Android设备直接安装试用，可�
 
 2. 接下来创建设备，请参考[设备接入介绍](https://azero.soundai.com/docs/document)进行设备注册。
 
-   ![dev_reg](/docs/dev_reg.png)
+   ![dev_reg](./docs/dev_reg.png)
 
 3. 创建完毕后，在**设备中心 -> 已创建设备**页面可以看到创建的设备，点击对应设备的“查看”进入设备信息页面，页面中的“产品ID”项对应的值即为productId；"Client ID"项对应的值即为clientId。 
 
@@ -90,7 +90,7 @@ Config config = new Config(
 
 完成上述过程，您已经对Azero的语音基本交互过程有了初步体验，如需将Azero SDK集成到您的工程，并针对您的自有设备进行唤醒、识别等语音交互效果的调优请参照进阶文档。
 
-- [声智Azero系统说明文档](./docs/声智Azero系统说明文档 - TurnkeySample.md)
+- [声智Azero系统说明文档](./docs/声智Azero系统说明文档.md)
 - [Azero SDK API](./docs/javadoc/index.html)
 
 ##  已知问题<a id="known_issue"> </a>
