@@ -254,6 +254,55 @@ Demo 中实现了一个简单的、用于显示正在播放的媒体的页面，
 public void executeSetMute(boolean mute)
 ```
 
+### 禁止tts播放(since V1.3.0)
+
+```java
+/**
+ * 开启TTS
+ *
+ */
+public void enableTts() {
+    speakerMediaplayerHandler.enableTts();
+}
+
+/**
+ * 禁用TTS
+ *
+ */
+public void disableTts() {
+    speakerMediaplayerHandler.disableTts();
+}
+```
+
+### 文字请求tts(since V1.3.0)
+
+```java
+/**
+ * 请求tts播报的接口，发送文字，sdk即可直接播放对应的tts流
+ * 注：使用该接口，需联系声智产品人员开通
+ * @param content
+ */
+public static void acquireTts(String content) {
+    Utils.acquireTts(content);
+}
+```
+
+
+
+### 发送文字query(since V1.3.0)
+
+```java
+/**
+ * 发送文字模拟语音输入
+ * @param query 模拟语音的文字接口
+ */
+public static void sendQueryText(String query) {
+    Utils.sendQueryText(query);
+}
+```
+
+
+
 ### 系统音量设置
 
 ```java

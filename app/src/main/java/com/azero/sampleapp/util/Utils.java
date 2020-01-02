@@ -48,9 +48,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import androidx.annotation.RequiresApi;
-
 public class Utils {
+
+    public static String getDeviceSn(Context context){
+        String imei = Utils.getimei(context);
+        String mac = Utils.getMac(context);
+        String devicesn = (imei== null)? mac :imei;
+        devicesn = (devicesn == null)? "test_app": devicesn;
+        return devicesn;
+    }
 
     public static String getMac(Context context) {
         String mac = "";
@@ -123,7 +129,7 @@ public class Utils {
 
     public static String getimei(@NonNull Context context) {
         Objects.requireNonNull(context);
-        String defaultSN = "12345678";
+
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (telephonyManager == null)
             return null;
@@ -132,7 +138,7 @@ public class Utils {
             return null;
         }
 
-        String imei = defaultSN;
+        String imei = null;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -140,7 +146,6 @@ public class Utils {
                 } else {
                     imei = telephonyManager.getDeviceId();
                 }
-                imei = (imei == null) ? defaultSN :imei;
                 return imei;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -149,7 +154,6 @@ public class Utils {
         } else {
             try {
                 imei = telephonyManager.getImei();
-                imei = (imei == null) ? defaultSN :imei;
                 return imei;
             } catch (Exception e) {
                 e.printStackTrace();

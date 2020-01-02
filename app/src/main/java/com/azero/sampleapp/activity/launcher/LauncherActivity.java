@@ -28,24 +28,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextClock;
-import android.widget.Toast;
 
 import com.azero.sampleapp.MyApplication;
 import com.azero.sampleapp.R;
-import com.azero.sampleapp.Setting;
-import com.azero.sampleapp.activity.controller.LocalViewController;
 import com.azero.sampleapp.activity.controller.TemplateViewController;
 import com.azero.sampleapp.activity.launcher.viewmodel.LauncherViewModel;
-import com.azero.sampleapp.impl.andcallcontroller.AndCallViewControllerHandler;
 import com.azero.sampleapp.util.Utils;
 import com.azero.sdk.AzeroManager;
 import com.azero.sdk.event.AzeroEvent;
-import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
 import com.azero.sdk.impl.TemplateRuntime.TemplateDispatcher;
 import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
 import com.azero.sdk.util.log;
@@ -62,14 +53,9 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
     private ViewPager viewPager;
     private LauncherPagerAdapter launcherPagerAdapter;
     private LauncherViewModel launcherViewModel;
-    private MediaPlayerHandler mMediaPlayer;
     private static String mCurrentAudioItemId;
     private boolean isForeground = false;
 
-    /* Shared Preferences */
-    private boolean mIsTalkButtonLongPressed = false;
-
-    private static final String sDeviceConfigFile = "app_config.json";
     private static final int sPermissionRequestCode = 0;
     private static final String[] sRequiredPermissions = {
             Manifest.permission.RECORD_AUDIO,
@@ -100,8 +86,8 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
             try {
                 MyApplication.getInstance().initAzero();
                 create();
-            }catch (RuntimeException e){
-                Utils.showAlertDialog(this,getString(R.string.alert_azero_init_failure), "Could not start engine. Reason: \n"
+            } catch (RuntimeException e) {
+                Utils.showAlertDialog(this, getString(R.string.alert_azero_init_failure), "Could not start engine. Reason: \n"
                         + e.getMessage());
             }
         }
@@ -115,14 +101,8 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
         viewPager = findViewById(R.id.container);
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/clock.ttf");
         textClock.setTypeface(typeFace);
-        LocalViewController localViewController = new LocalViewController(this);
-        AndCallViewControllerHandler mAndCallViewControllerHandler = AndCallViewControllerHandler.getInstance();
 
         renderView();
-
-        if (Setting.enableHjghAndAndLink) {
-            initPhoneCallButtonView();
-        }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
@@ -142,10 +122,10 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
         if (requestCode == sPermissionRequestCode) {
             boolean any_denied = false;
             if (grantResults.length > 0) {
-                for (int i=0; i < grantResults.length; i++) {
+                for (int i = 0; i < grantResults.length; i++) {
                     if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         any_denied = true;
-                        Utils.showAlertDialog(this,getString(R.string.alert_azero_init_failure), permissions[i] + getString(R.string.alert_azero_no_permission));
+                        Utils.showAlertDialog(this, getString(R.string.alert_azero_init_failure), permissions[i] + getString(R.string.alert_azero_no_permission));
                     }
                 }
                 if (!any_denied) {
@@ -153,7 +133,7 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
                     create();
                 }
             } else {
-                Utils.showAlertDialog(this,getString(R.string.alert_azero_init_failure), getString(R.string.alert_azero_no_permission));
+                Utils.showAlertDialog(this, getString(R.string.alert_azero_init_failure), getString(R.string.alert_azero_no_permission));
             }
         }
     }
@@ -162,10 +142,10 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
         launcherViewModel = ViewModelProviders.of(this).get(LauncherViewModel.class);
         launcherViewModel.getRecommendationList().observe(this, recommendations -> {
             if (recommendations != null && recommendations.size() > 0) {
-                log.d("recommendation size" + recommendations.size());
-                launcherPagerAdapter.initFragments(recommendations);
+                launcherPagerAdapter.updateFragments(recommendations, launcherPagerAdapter.getCurrentPos());
             }
         });
+        launcherViewModel.initDefaultRecommendation();
     }
 
     private void renderView() {
@@ -174,21 +154,22 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
         launcherPagerAdapter.setLoopInterval(10000);
         viewPager.setAdapter(launcherPagerAdapter);
         launcherPagerAdapter.startLoop();
+        launcherPagerAdapter.setLauncherViewModel(launcherViewModel);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-		if(launcherPagerAdapter != null){
-			launcherPagerAdapter.startLoop();
-		}
+        if (launcherPagerAdapter != null) {
+            launcherPagerAdapter.startLoop();
+        }
         isForeground = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(launcherPagerAdapter != null){
+        if (launcherPagerAdapter != null) {
             launcherPagerAdapter.stopLoop();
         }
         isForeground = false;
@@ -212,37 +193,9 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void initPhoneCallButtonView() {
-        ImageButton phone = findViewById(R.id.phone);
-
-        phone.setImageResource(R.drawable.soundai_phone_h);
-        phone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AndCallViewControllerHandler.getInstance().onLoginIms();
-            }
-        });
-
-        phone.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    phone.setImageResource(R.drawable.soundai_phone_n);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    phone.setImageResource(R.drawable.soundai_phone_h);
-                }
-                return false;
-            }
-        });
-
-    }
-
     private void initAzero() {
         log.d("initAzero");
         TemplateViewController mTemplateViewController = new TemplateViewController(this.getApplicationContext());
-        mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
         TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
         templateRuntimeHandler.registerTemplateDispatchedListener(new TemplateDispatcher() {
             @Override
@@ -280,6 +233,9 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
                             break;
                         case "AlertRingtoneTemplate":
                             mTemplateViewController.showDisplayCard(template, TemplateViewController.SHOW_ALERT_RINGING_INFO);
+                            break;
+                        case "LauncherTemplate1":
+                            launcherViewModel.loadRecommendations(template);
                             break;
                         default:
                             break;

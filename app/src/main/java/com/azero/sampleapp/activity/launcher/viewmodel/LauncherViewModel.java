@@ -17,27 +17,74 @@ package com.azero.sampleapp.activity.launcher.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.azero.sampleapp.activity.launcher.LauncherDataManager;
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class LauncherViewModel extends AndroidViewModel {
-    private LiveData<List<Recommendation>> mRecommendationData;
-    private RecommendationRepository mRepository;
+    private LauncherDataManager launcherDataManager;
+
+    private boolean needClearRecommendations = true;
+
+    private MutableLiveData<List<Recommendation>> mRecommendationData = new MutableLiveData<>();
 
     public LauncherViewModel(@NonNull Application application) {
         super(application);
-        mRepository = new RecommendationRepository(application);
-        mRecommendationData = mRepository.getALLRecommendations();
+        launcherDataManager = new LauncherDataManager();
+        mRecommendationData.setValue(new ArrayList<>());
     }
 
     public LiveData<List<Recommendation>> getRecommendationList() {
         return mRecommendationData;
     }
 
-    public void insert(Recommendation recommendation) {
-        mRepository.insert(recommendation);
+    public void loadRecommendations(JSONObject template) {
+        List<Recommendation> recommendationList = mRecommendationData.getValue();
+        if (recommendationList == null) {
+            return;
+        }
+        if (needClearRecommendations) {
+            recommendationList.clear();
+            needClearRecommendations = false;
+        }
+        try {
+            String url = ((JSONObject) (template.getJSONObject("backgroundImage")
+                    .getJSONArray("sources").get(0))).getString("url");
+            String contentId = template.getString("contentId");
+            String textContent = template.getString("textContent");
+            String prompt = template.getString("prompt");
+            Recommendation recommendation = new Recommendation();
+            recommendation.setBgUrl(url);
+            recommendation.setContentId(contentId);
+            recommendation.setTitle(textContent);
+            recommendation.setIntroduce(prompt);
+
+            recommendationList.add(recommendation);
+            mRecommendationData.postValue(recommendationList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateRecommendations(String contentId) {
+        launcherDataManager.updateLauncher(contentId);
+    }
+
+    public void initDefaultRecommendation() {
+        List<Recommendation> recommendationList = mRecommendationData.getValue();
+        if (recommendationList == null) {
+            return;
+        }
+        Recommendation recommendation = new Recommendation(0, Recommendation.Type.TEMPLATE2, "每日天气预报", "“今天天气怎么样”", "https://cms-azero.soundai.cn:8443/v1/cmsservice/resource/e6c634f1dfcfb7d1072c74faf3f3db19.jpg", "");
+        recommendationList.add(recommendation);
+        mRecommendationData.postValue(recommendationList);
     }
 }

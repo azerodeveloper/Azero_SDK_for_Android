@@ -32,8 +32,8 @@
         <activity
             android:name=".activity.launcher.LauncherActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,10 +48,6 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.azero.sampleapp.activity.template.WeatherActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".activity.thirdparty.andcall.AndCallViewControllerActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme" />
         <activity
@@ -90,10 +86,11 @@
         <activity
             android:name=".activity.playerinfo.news.NewsActivity"
             android:launchMode="singleTask" />
-	    
-        <activity android:name=".activity.weather.WeatherActivity"
+        <activity
+            android:name=".activity.weather.WeatherActivity"
             android:launchMode="singleTask"
-            android:theme="@style/WeatherAppTheme"></activity>
+            android:theme="@style/WeatherAppTheme" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="" />

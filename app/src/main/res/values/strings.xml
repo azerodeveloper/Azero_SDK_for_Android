@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">Azero Sample</string>
 
     <!-- Actions -->
@@ -143,19 +143,6 @@
     <!-- Alert -->
     <string name="alert_azero_init_failure">Azero init failure</string>
     <string name="alert_azero_no_permission">系统权限未被允许， 请赋予权限后重新尝试！</string>
-
-
-    <!--AndLink-->
-    <string name="preference_file_soundai_key">com.soundai.SoundAISharedPreferences</string>
-    <string name="preference_device_sn">deviceSN</string>
-    <string name="preference_gwAddress">gwAddress</string>
-    <string name="preference_gwAddress2">gwAddress2</string>
-    <string name="preference_userPhone">userPhone</string>
-    <string name="preference_user_key">user_key</string>
-    <string name="preference_gwToken">gwToken</string>
-    <string name="preference_deviceId">deviceId</string>
-    <string name="preference_mqttClientId">mqttClientId</string>
-    <string name="preference_qr_code_token">qrCodeToken</string>
 
     <!--<string name="preference_client_secret">Client Secret Key</string>-->
     <!--<string name="preference_client_id">preference_client_id</string>-->

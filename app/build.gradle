@@ -59,8 +59,7 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.0'
     implementation(name: 'denoise-release', ext: 'aar')
     implementation(name: 'azero-release', ext: 'aar')
-    // 和家固话
-    implementation(name: 'CMCC_VoIP_Android_SDK_V1.4.0.2_1562896171', ext: 'aar')
+
     implementation 'com.alibaba:fastjson:1.2.14'
     implementation 'log4j:log4j:1.2.17'
     implementation 'com.loopj.android:android-async-http:1.4.9'

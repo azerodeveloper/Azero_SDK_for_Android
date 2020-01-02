@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.azero.sampleapp.activity.template.QrCodeActivity;
-import com.azero.sampleapp.activity.thirdparty.andcall.AndCallViewControllerActivity;
 import com.azero.sdk.util.Constant;
 
 public class LocalViewController {
@@ -43,9 +42,6 @@ public class LocalViewController {
         switch (type) {
             case QR_CORD_ACTIVITY:
                 intent.setClass(context, QrCodeActivity.class);
-                break;
-            case AND_CALL_ACTIVITY:
-                intent.setClass(context, AndCallViewControllerActivity.class);
                 break;
             default:
                 break;

@@ -92,7 +92,7 @@ public class NewsActivity extends BasePlayerInfoActivity {
                             AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_NEXT);
                             mOperateQueue.add(++mCurrentPosition);
                         }
-                    } else if (offset < 0) {
+                    } else {
                         for (int i = 0; i < -offset; i++) {
                             AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_PREVIOUS);
                             mOperateQueue.add(--mCurrentPosition);

@@ -14,12 +14,16 @@
 package com.azero.sampleapp.activity.launcher;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 
+import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
 import com.azero.sampleapp.activity.launcher.recommendation.RecommendationFragment;
+import com.azero.sampleapp.activity.launcher.viewmodel.LauncherViewModel;
+import com.google.android.gms.common.util.CollectionUtils;
 
 
 /**
@@ -31,6 +35,7 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
     private Handler handler;
     private LoopRunnable loopRunnable;
     private SwitchRunnable switchRunnable;
+    private LauncherViewModel launcherViewModel;
 
     private boolean mRunning = false;
 
@@ -42,6 +47,38 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
         loopRunnable = new LoopRunnable();
         switchRunnable = new SwitchRunnable();
         registerTouchListener();
+        initListener();
+    }
+
+    private void initListener() {
+        ViewPager.OnPageChangeListener listener = new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // do nothing
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (launcherViewModel == null || CollectionUtils.isEmpty(fragments)) {
+                    return;
+                }
+                // 滑动到倒数第二个，拉取下一组Launcher（为了实现无限轮播，会在最后添一个item，所以倒数第二个是 size - 3）
+                if (position != POSITION_UNCHANGED && position != POSITION_NONE && position == fragments.size() - 3) {
+                    Bundle arguments = fragments.get(fragments.size() - 2).getArguments();
+                    Recommendation recommendation = arguments.getParcelable(RecommendationFragment.ARG_RECOMMENDATION);
+                    if (recommendation != null) {
+                        launcherViewModel.updateRecommendations(recommendation.getContentId());
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // do nothing
+            }
+        };
+        viewPager.addOnPageChangeListener(listener);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -66,6 +103,10 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
             return false;
         });
 
+    }
+
+    public void setLauncherViewModel(LauncherViewModel launcherViewModel) {
+        this.launcherViewModel = launcherViewModel;
     }
 
     public void setLoopInterval(long interval) {
@@ -98,8 +139,6 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
     }
 
     class LoopRunnable implements Runnable {
-
-
         public void start() {
             handler.postDelayed(this, interval);
         }
@@ -114,6 +153,9 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
 
         @Override
         public void run() {
+            if (CollectionUtils.isEmpty(fragments) || fragments.size() == 1) {
+                return;
+            }
             int currentItem = viewPager.getCurrentItem();
             fragments.get(currentItem).startFadeOutAnimate();
             handler.postDelayed(switchRunnable, 1000);
@@ -121,20 +163,11 @@ public class LauncherPagerAdapter extends LoopFragmentPagerAdapter {
     }
 
     class SwitchRunnable implements Runnable {
-
         @Override
         public void run() {
             int currentItem = viewPager.getCurrentItem();
             viewPager.setCurrentItem(currentItem + 1);
             handler.postDelayed(loopRunnable, interval);
         }
-    }
-
-    public RecommendationFragment getCurrentItem() {
-        if (fragments.size() > 0) {
-            int currentItem = viewPager.getCurrentItem();
-            return fragments.get(currentItem);
-        }
-        return null;
     }
 }

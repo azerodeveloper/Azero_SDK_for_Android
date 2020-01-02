@@ -13,8 +13,6 @@
 
 package com.azero.sampleapp;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.support.multidex.MultiDexApplication;
 
 import com.azero.platforms.iface.config.AzeroConfiguration;
@@ -26,13 +24,10 @@ import com.azero.sampleapp.impl.azeroexpress.navigation.NavigationHandler;
 import com.azero.sampleapp.impl.phonecallcontroller.PhoneCallControllerHandler;
 import com.azero.sampleapp.impl.audioinput.AudioInputManager;
 import com.azero.sampleapp.impl.audioinput.SpeechRecognizerHandler;
-import com.azero.sampleapp.impl.andlink.AndLinkViewHandler;
 import com.azero.sampleapp.impl.azeroexpress.AzeroExpressHandler;
-import com.azero.sampleapp.impl.andcallcontroller.AndCallViewControllerHandler;
 import com.azero.sampleapp.impl.audioinput.record.BasexRecord;
 import com.azero.sampleapp.util.Utils;
 import com.azero.platforms.iface.AlexaClient;
-import com.azero.sdk.AndLinkConfig;
 import com.azero.sdk.Config;
 
 import com.azero.sdk.AzeroManager;
@@ -40,7 +35,6 @@ import com.azero.sdk.HandlerContainer;
 import com.azero.sdk.HandlerContainerBuilder;
 import com.azero.sdk.event.Command;
 import com.azero.sdk.impl.Alerts.AlertsHandler;
-import com.azero.sdk.impl.AndLink.AndLinkManager;
 import com.azero.sdk.impl.AzeroClient.AzeroClientHandler;
 import com.azero.sdk.util.executors.AppExecutors;
 import com.azero.sdk.util.log;
@@ -63,13 +57,13 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
     }
 
 
-    public void initAzero() throws RuntimeException{
+    public void initAzero() throws RuntimeException {
 
         //第一步 配置参数 注册必要模块 @{
         Config config = new Config(
                 "",         //productID 网站申请
                 "",             //ClientID  网站申请
-                Utils.getimei(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
+                Utils.getDeviceSn(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
                 Config.SERVER.PRO,                              //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
                 Setting.enableLocalVAD                          //localVAD  是否使用本地VAD
         );
@@ -98,74 +92,32 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
                 true
         );
 
-        // 选择是否开启AndLink模块及和家固话模块
-        HandlerContainerBuilder.PHONE phone;
-        if (Setting.enableHjghAndAndLink) {
-            phone = HandlerContainerBuilder.PHONE.HEJIA;
-        } else {
-            phone = HandlerContainerBuilder.PHONE.PHONE;
-        }
+        //选择和注册必要模块
+        HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
+                .setAudioHandler(HandlerContainerBuilder.AUDIO.SOUNDAI)
+                .setMusicHandler(HandlerContainerBuilder.MUSIC.SOUNDAI)
+                .setVideoHandler(HandlerContainerBuilder.VIDEO.MIFENG)
+                .setPhoneCallHandler(HandlerContainerBuilder.PHONE.PHONE)
+                .setSpeechRecognizer(speechRecognizerHandler) //必须注册识别模块
+                .create();
+        //@}
 
-            //选择和注册必要模块
-            HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
-                    .setAudioHandler(HandlerContainerBuilder.AUDIO.SOUNDAI)
-                    .setMusicHandler(HandlerContainerBuilder.MUSIC.SOUNDAI)
-                    .setVideoHandler(HandlerContainerBuilder.VIDEO.MIFENG)
-                    .setPhoneCallHandler(phone)
-                    .setSpeechRecognizer(speechRecognizerHandler) //必须注册识别模块
-                    .create();
-            //@}
+        //第二歩 启动引擎 @{
+        AzeroManager.getInstance().startEngine(this, config, handlerContainer);
+        //@}
 
-            //第二歩 启动引擎 @{
-            AzeroManager.getInstance().startEngine(this, config, handlerContainer);
-            //@}
+        //自定义内容模块
+        mAzeroExpressHandler = new AzeroExpressHandler(appExecutors, this);
+        mAzeroExpressHandler.setNavigationHandler(new NavigationHandler(this));
+        AzeroManager.getInstance().setCustomAgent(mAzeroExpressHandler);
 
-            //自定义内容模块
-            mAzeroExpressHandler = new AzeroExpressHandler(appExecutors, this);
-            mAzeroExpressHandler.setNavigationHandler(new NavigationHandler(this));
-            AzeroManager.getInstance().setCustomAgent(mAzeroExpressHandler);
+        //初始化本地View控制模块
+        mLocalViewController = new LocalViewController(this);
 
-            //初始化本地View控制模块
-            mLocalViewController = new LocalViewController(this);
+        //@{
+        PhoneCallControllerHandler phoneCallControllerHandler = new PhoneCallControllerHandler();
+        //@}
 
-            //Andlink and PhoneCall
-            //@{
-            if (Setting.enableHjghAndAndLink) {
-                enableAndLinkAndHjgh(config, audioInputManager);
-            } else {
-                PhoneCallControllerHandler phoneCallControllerHandler = new PhoneCallControllerHandler();
-            }
-            //@}
-
-            // 初始化结束后自动连接和家固话，若未绑定则显示绑定界面
-            AndLinkManager.getInstance(this).requestAndLinkAddress();
-    }
-
-    private void enableAndLinkAndHjgh(Config config, AudioInputManager audioInputManager) {
-        AndLinkConfig andLinkConfig = new AndLinkConfig(
-                "500405",           // deviceType AndLink产品Id
-                "SaiApp 627b3650d0ed9473:OGZlN2NjMjEzMDZhNjY0MTE0ZTVmYTIwMjY4YzM5M2Q=",  // authorization 身份认证信息，组成方式 SaiApp appId:secretKey
-                "SxT1IeQDEd36tG2M",         // productToken 和家固话产品验证码，通过和家固话管理平台获取
-                "1.1",      // firmWareVersion 固件版本
-                "00ss7wd3ltutzgxo",     // authAppKey 和家固话管理平台获取
-                "p8bw2upxfbqssfro"      // appSecret 和家固话管理平台获取
-        );
-
-        AndLinkManager mAndLinkManager = AndLinkManager.getInstance(this);
-
-        //初始化AndLink界面控制分发模块
-        AndLinkViewHandler mAndLinkViewHandler = new AndLinkViewHandler();
-
-        mAndLinkViewHandler.init(mAndLinkManager, config, andLinkConfig);
-        mAndLinkViewHandler.setLocalViewController(mLocalViewController);
-
-        //初始化和家固话界面控制模块
-        AndCallViewControllerHandler mAndCallViewControllerHandler = AndCallViewControllerHandler.getInstance();
-        mAndCallViewControllerHandler.init(this, andLinkConfig, audioInputManager);
-
-        mAndCallViewControllerHandler.setLocalViewController(mLocalViewController);
-
-        mAzeroExpressHandler.setAndLinkHandler(mAndLinkManager);
     }
 
     @Override

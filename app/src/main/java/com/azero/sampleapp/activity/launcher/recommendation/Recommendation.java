@@ -14,6 +14,7 @@
 package com.azero.sampleapp.activity.launcher.recommendation;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
@@ -37,6 +38,11 @@ public class Recommendation implements Parcelable {
     private String asrQuery;
     @TypeConverters({Converters.class})
     private Type type;
+    private String contentId;
+
+    @Ignore
+    public Recommendation() {
+    }
 
     public Recommendation(long id, Type type, String title, String introduce, String bgUrl, String asrQuery) {
         this.id = id;
@@ -61,6 +67,14 @@ public class Recommendation implements Parcelable {
 
     public String getAsrQuery() {
         return asrQuery;
+    }
+
+    public String getContentId() {
+        return contentId;
+    }
+
+    public void setContentId(String contentId) {
+        this.contentId = contentId;
     }
 
     @Override

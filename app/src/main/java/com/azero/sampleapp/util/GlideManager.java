@@ -29,8 +29,8 @@ public class GlideManager {
 
     public static void loadImg(Context context, String url, ImageView imageView){
         RequestOptions options = new RequestOptions()
-                .placeholder(R.drawable.img_default)
-                .error(R.drawable.img_default)
+                .placeholder(R.drawable.img_load_default)
+                .error(R.drawable.img_load_default)
                 .override(300,300)
                 .centerInside()
         .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
@@ -38,8 +38,8 @@ public class GlideManager {
     }
     public static void loadImg(Context context, String url, ImageView imageView,int width,int height){
         RequestOptions options = new RequestOptions()
-                .placeholder(R.drawable.img_default)
-                .error(R.drawable.img_default)
+                .placeholder(R.drawable.img_load_default)
+                .error(R.drawable.img_load_default)
                 .override(width,height)
                 .centerInside()
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE);

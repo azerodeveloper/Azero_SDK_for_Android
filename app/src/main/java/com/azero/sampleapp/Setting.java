@@ -15,6 +15,4 @@ package com.azero.sampleapp;
 
 public class Setting {
     public static final boolean enableLocalVAD = true;
-
-    public static final boolean enableHjghAndAndLink = false;
 }

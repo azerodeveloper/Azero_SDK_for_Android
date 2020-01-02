@@ -15,13 +15,9 @@ package com.azero.sampleapp.impl.azeroexpress;
 
 import android.content.Context;
 
-import com.azero.sampleapp.Setting;
-import com.azero.sampleapp.widget.GlobalBottomBar;
 import com.azero.platforms.iface.AzeroExpress;
-import com.azero.sampleapp.impl.andcallcontroller.AndCallViewControllerHandler;
-import com.azero.sdk.impl.AndLink.AndLinkManager;
 import com.azero.sampleapp.impl.azeroexpress.navigation.NavigationHandler;
-import com.azero.sdk.util.Constant;
+import com.azero.sampleapp.widget.GlobalBottomBar;
 import com.azero.sdk.util.executors.AppExecutors;
 import com.azero.sdk.util.log;
 
@@ -39,16 +35,11 @@ import org.json.JSONObject;
 public class AzeroExpressHandler extends AzeroExpress {
     private AppExecutors mExecutors;
     private Context mContext;
-    private AndLinkManager mAndLinkManager;
     private NavigationHandler navigationHandler;
 
     public AzeroExpressHandler(AppExecutors executors, Context context) {
         mExecutors = executors;
         mContext = context;
-    }
-
-    public void setAndLinkHandler(AndLinkManager andLinkManager) {
-        mAndLinkManager = andLinkManager;
     }
 
     @Override
@@ -57,24 +48,10 @@ public class AzeroExpressHandler extends AzeroExpress {
         try {
             JSONObject expressDirective = new JSONObject(payload);
             switch (name) {
-                case "AndLink":
-                    if (Setting.enableHjghAndAndLink) {
-                        mAndLinkManager.loginAndLink(expressDirective);
-                    }
-                    break;
                 case "ASRText":
                     if (expressDirective.has("text")) {
                         String text = expressDirective.getString("text");
                         mExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).append(text));
-                    }
-                    break;
-                case "ReportLog":
-                    if (expressDirective.has("type")) {
-                        if (Setting.enableHjghAndAndLink) {
-                            if ("andLink".equals(expressDirective.getString("type"))) {
-                                AndCallViewControllerHandler.getInstance().onUpLoadLog();
-                            }
-                        }
                     }
                     break;
                 case "Navigation":
@@ -82,29 +59,6 @@ public class AzeroExpressHandler extends AzeroExpress {
                         navigationHandler.handleDirective(expressDirective);
                     }
                     break;
-                case "AndCallState":
-                    if (Setting.enableHjghAndAndLink) {
-                        if (expressDirective.has("andCallStateNum")) {
-                            String andCallStateNum = expressDirective.getString("andCallStateNum");
-                            switch (andCallStateNum) {
-                                case Constant.AndCallStateNum.ANDHOME_ENABLE:
-                                    log.d("启用和家固话");
-                                    AndCallViewControllerHandler.getInstance().onLoginIms();
-                                    break;
-                                case Constant.AndCallStateNum.ANDHOME_DISCONNECT:
-                                    log.d("停用和家固话");
-                                    break;
-                                case Constant.AndCallStateNum.ANDHOME_CANCELLATION:
-                                    log.d("注销和家固话");
-                                    break;
-                                case Constant.AndCallStateNum.ANDHOME_SIGN_IN:
-                                    log.d("登录和家固话");
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
                 default:
                     break;
             }

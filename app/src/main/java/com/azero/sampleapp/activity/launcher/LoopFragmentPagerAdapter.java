@@ -32,19 +32,20 @@ import java.util.List;
  */
 public abstract class LoopFragmentPagerAdapter extends FragmentStatePagerAdapter implements ViewPager.OnPageChangeListener {
 
+    private static final int LEFT_TO_RIGHT = 0;
+
+    private static final int RIGHT_TO_LEFT = 1;
+
+    private static final int DEFAULT_POSITION = 1;
+
     protected ViewPager viewPager;
     protected List<RecommendationFragment> fragments;
-    private int FIRST_ITEM_POSITION;
-    private int LAST_ITEM_POSITION;
-    private boolean isChanged = false;
+    private int firstItemPosition;
+    private int lastItemPosition;
     private int currentPos;
+    private boolean isChanged = false;
     private int lastPos;
-    //用于判断文字滑动方向
-    // left to right  0
-    // right to left 1
-    private int direction = 0;
     private ViewPageHelper viewPageHelper;
-
 
     public LoopFragmentPagerAdapter(ViewPager vp, FragmentManager fm) {
         super(fm);
@@ -64,24 +65,45 @@ public abstract class LoopFragmentPagerAdapter extends FragmentStatePagerAdapter
         return fragments.size();
     }
 
-    public void initFragments(List<Recommendation> recommendations) {
-        if (!(recommendations != null && recommendations.size() > 0))
-            throw new NullPointerException("Couldn't init Fragments");
+    public int getCurrentPos() {
+        return currentPos;
+    }
+
+    public void updateFragments(List<Recommendation> recommendations) {
+        updateFragments(recommendations, DEFAULT_POSITION);
+    }
+
+    public void updateFragments(List<Recommendation> recommendations, int position) {
+        if (recommendations == null || recommendations.isEmpty()) {
+            log.e("updateFragments: recommendation list is empty");
+            return;
+        }
+        if (position < firstItemPosition) {
+            position = firstItemPosition;
+        } else if (position > lastItemPosition) {
+            position = lastItemPosition;
+        }
         sortData(recommendations);
         notifyDataSetChanged();
-        viewPager.setCurrentItem(1);
-        FIRST_ITEM_POSITION = 1;
-        LAST_ITEM_POSITION = fragments.size() - 2;
-        fragments.get(FIRST_ITEM_POSITION).startFadeInAnimate(1);
+        viewPager.setCurrentItem(position);
+        if (recommendations.size() > 1) {
+            firstItemPosition = 1;
+            lastItemPosition = fragments.size() - 2;
+        }
+        fragments.get(position).startFadeInAnimate(1);
     }
 
     private void sortData(List<Recommendation> recommendations) {
-        fragments.add(RecommendationFragment.newInstance(recommendations.get(recommendations.size() - 1)));
+        fragments.clear();
         for (Recommendation recommendation : recommendations) {
             RecommendationFragment recommendationFragment = RecommendationFragment.newInstance(recommendation);
             fragments.add(recommendationFragment);
         }
-        fragments.add(RecommendationFragment.newInstance(recommendations.get(0)));
+        if (recommendations.size() > 1) {
+            fragments.add(0, RecommendationFragment.newInstance(recommendations.get(recommendations.size() - 1)));
+            fragments.add(RecommendationFragment.newInstance(recommendations.get(0)));
+        }
+
     }
 
     @Override
@@ -93,12 +115,12 @@ public abstract class LoopFragmentPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public void onPageSelected(int position) {
         currentPos = position;
-        if (position > LAST_ITEM_POSITION) {
+        if (position > lastItemPosition) {
             isChanged = true;
-            currentPos = FIRST_ITEM_POSITION;
-        } else if (position < FIRST_ITEM_POSITION) {
+            currentPos = firstItemPosition;
+        } else if (position < firstItemPosition) {
             isChanged = true;
-            currentPos = LAST_ITEM_POSITION;
+            currentPos = lastItemPosition;
         }
         if (isChanged) {
             isChanged = false;
@@ -106,16 +128,17 @@ public abstract class LoopFragmentPagerAdapter extends FragmentStatePagerAdapter
             return;
         }
         //文字滑动方向判断
-        if (currentPos == LAST_ITEM_POSITION && lastPos == FIRST_ITEM_POSITION) {
+        int direction;
+        if (currentPos == lastItemPosition && lastPos == firstItemPosition) {
             //从第一页滑到最后一页
-            direction = 1;
-        } else if (currentPos == FIRST_ITEM_POSITION && lastPos == LAST_ITEM_POSITION) {
+            direction = RIGHT_TO_LEFT;
+        } else if (currentPos == firstItemPosition && lastPos == lastItemPosition) {
             //最后一页滑到第一页
-            direction = 0;
+            direction = LEFT_TO_RIGHT;
         } else if (currentPos - lastPos > 0) {
-            direction = 0;
+            direction = LEFT_TO_RIGHT;
         } else {
-            direction = 1;
+            direction = RIGHT_TO_LEFT;
         }
         fragments.get(currentPos).startFadeInAnimate(direction);
         lastPos = currentPos;
