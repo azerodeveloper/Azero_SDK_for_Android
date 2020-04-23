@@ -18,7 +18,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class WeatherAir implements Parcelable {
-    private String data;
+    private String date;
     private String aqi;
     private String pm25;
     private String pm10;
@@ -35,12 +35,12 @@ public class WeatherAir implements Parcelable {
 
 
 
-    public String getData() {
-        return data;
+    public String getDate() {
+        return date;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getIconUrl() {
@@ -158,7 +158,7 @@ public class WeatherAir implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.data);
+        dest.writeString(this.date);
         dest.writeString(this.aqi);
         dest.writeString(this.pm25);
         dest.writeString(this.pm10);
@@ -175,7 +175,7 @@ public class WeatherAir implements Parcelable {
     }
 
     protected WeatherAir(Parcel in) {
-        this.data = in.readString();
+        this.date = in.readString();
         this.aqi = in.readString();
         this.pm25 = in.readString();
         this.pm10 = in.readString();

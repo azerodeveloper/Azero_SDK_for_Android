@@ -77,15 +77,15 @@ public class WeatherSuggestFragment extends WeatherFragmentBase {
 
 
         if (weather.getSuggestion().getDressing() != null) {
-            carInfo.setText(weather.getSuggestion().getDressing().getSuggest());
+            carInfo.setText(weather.getSuggestion().getDressing().getSuggestion());
             Glide.with(this).load(weather.getSuggestion().getDressing().getIconUrl()).into(carIcon);
         }
         if (weather.getSuggestion().getUmbrella() != null) {
-            umbrellaInfo.setText(weather.getSuggestion().getUmbrella().getSuggest());
+            umbrellaInfo.setText(weather.getSuggestion().getUmbrella().getSuggestion());
             Glide.with(this).load(weather.getSuggestion().getUmbrella().getIconUrl()).into(umbrellaIcon);
         }
         if (weather.getSuggestion().getCarWashing() != null) {
-            clothInfo.setText(weather.getSuggestion().getCarWashing().getSuggest());
+            clothInfo.setText(weather.getSuggestion().getCarWashing().getSuggestion());
             Glide.with(this).load(weather.getSuggestion().getCarWashing().getIconUrl()).into(clothIcon);
         }
 

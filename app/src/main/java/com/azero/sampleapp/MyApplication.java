@@ -18,6 +18,7 @@ import android.support.multidex.MultiDexApplication;
 import com.azero.platforms.iface.config.AzeroConfiguration;
 import com.azero.sampleapp.activity.controller.LocalViewController;
 import com.azero.sampleapp.impl.audioinput.record.SystemRecord;
+import com.azero.sampleapp.impl.contactuploader.ContactUploaderHandler;
 import com.azero.sampleapp.manager.ActivityLifecycleManager;
 import com.azero.sampleapp.widget.DisconnectStatusBar;
 import com.azero.sampleapp.impl.azeroexpress.navigation.NavigationHandler;
@@ -61,12 +62,13 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
 
         //第一步 配置参数 注册必要模块 @{
         Config config = new Config(
-                "",         //productID 网站申请
-                "",             //ClientID  网站申请
+                "speaker_azero_test",         //productID 网站申请
+                "5da580abda66010006f7e6c4",             //ClientID  网站申请
                 Utils.getDeviceSn(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
                 Config.SERVER.PRO,                              //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
                 Setting.enableLocalVAD                          //localVAD  是否使用本地VAD
         );
+        config.setShowSetVolume(true);
         //定义界面消失时间，不填则使用如下默认值
         config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
                 //Template界面在TTS播放完后消失的时间
@@ -118,6 +120,7 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
         PhoneCallControllerHandler phoneCallControllerHandler = new PhoneCallControllerHandler();
         //@}
 
+        ContactUploaderHandler contactUploaderHandler = new ContactUploaderHandler();
     }
 
     @Override

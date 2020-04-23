@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.azero.sampleapp.activity.playerinfo.playerpager.PlayerInfoViewPagerActivity;
+import com.azero.sampleapp.activity.weather.WeatherActivity;
 import com.azero.sampleapp.manager.ActivityLifecycleManager;
 import com.azero.sampleapp.activity.alert.AlertRingtoneActivity;
 import com.azero.sampleapp.activity.alert.AlertsActivity;
@@ -65,7 +66,7 @@ public class TemplateViewController {
                 intent.setClass(context, ListTemplate1Activity.class);
                 break;
             case WEATHER_TEMPLATE:
-                intent.setClass(context, com.azero.sampleapp.activity.template.WeatherActivity.class);
+                intent.setClass(context, WeatherActivity.class);
                 break;
             case SET_DESTINATION_TEMPLATE:
             case LOCAL_SEARCH_LIST_TEMPLATE1:

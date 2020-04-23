@@ -27,7 +27,7 @@ public class WeatherNow implements Parcelable {
     private String windDirection;
     private String windDirectionDegree;
     private String windSpeed;
-    private String wind_scale;
+    private String windScale;
     private String iconUrl;
     private String backgroundUrl;
     private String windDirectionIcon;
@@ -113,12 +113,12 @@ public class WeatherNow implements Parcelable {
         this.windSpeed = windSpeed;
     }
 
-    public String getWind_scale() {
-        return wind_scale;
+    public String getWindScale() {
+        return windScale;
     }
 
-    public void setWind_scale(String wind_scale) {
-        this.wind_scale = wind_scale;
+    public void setWindScale(String windScale) {
+        this.windScale = windScale;
     }
 
     public String getIconUrl() {
@@ -166,7 +166,7 @@ public class WeatherNow implements Parcelable {
         dest.writeString(this.windDirection);
         dest.writeString(this.windDirectionDegree);
         dest.writeString(this.windSpeed);
-        dest.writeString(this.wind_scale);
+        dest.writeString(this.windScale);
         dest.writeString(this.iconUrl);
         dest.writeString(this.backgroundUrl);
         dest.writeString(this.windDirectionIcon);
@@ -183,7 +183,7 @@ public class WeatherNow implements Parcelable {
         this.windDirection = in.readString();
         this.windDirectionDegree = in.readString();
         this.windSpeed = in.readString();
-        this.wind_scale = in.readString();
+        this.windScale = in.readString();
         this.iconUrl = in.readString();
         this.backgroundUrl = in.readString();
         this.windDirectionIcon = in.readString();

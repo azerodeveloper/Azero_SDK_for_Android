@@ -88,6 +88,7 @@
             android:launchMode="singleTask" />
         <activity
             android:name=".activity.weather.WeatherActivity"
+            android:screenOrientation="landscape"
             android:launchMode="singleTask"
             android:theme="@style/WeatherAppTheme" />
 

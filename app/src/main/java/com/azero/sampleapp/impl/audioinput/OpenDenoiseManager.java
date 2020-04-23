@@ -181,6 +181,7 @@ public class OpenDenoiseManager {
                         log.d("localVad:" + vadResult);
                         if (filterFirstVAD) {
                             log.e("filter");
+                            filterFirstVAD = false;
                             return;
                         }
                         if (denoiseCallback != null) {

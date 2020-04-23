@@ -13,9 +13,8 @@
 
 package com.azero.sampleapp.impl.audioinput;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
+import android.os.CountDownTimer;
 
 import com.azero.sampleapp.widget.GlobalBottomBar;
 import com.azero.sdk.impl.Common.InputManager;
@@ -23,8 +22,8 @@ import com.azero.sdk.impl.SpeechRecognizer.AbsSpeechRecognizer;
 import com.azero.sdk.util.executors.AppExecutors;
 import com.azero.sdk.util.log;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * 语音识别数据管理模块
@@ -40,10 +39,24 @@ import java.util.concurrent.Executors;
 public class SpeechRecognizerHandler extends AbsSpeechRecognizer
         implements AudioInputManager.AudioInputConsumer, AudioInputManager.LocalVadListener {
     private final InputManager mAudioInputManager;
-    private boolean mAllowStopCapture = false; // Only true if holdToTalk() returned true
+    // Only true if holdToTalk() returned true
+    private boolean mAllowStopCapture = false;
+    private boolean mVadTimeoutStart = false;
+    private boolean mReceiveVadEnd = false;
     private long beginTime;
     private AppExecutors appExecutors;
     private Context mContext;
+    private CountDownTimer vadTimeOutTimer = new CountDownTimer(300, 300) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+        }
+
+        @Override
+        public void onFinish() {
+            log.d("VAD TIMEOUT TIMER TEST: time out");
+            onReleaseHoldToTalk();
+        }
+    };
 
     public SpeechRecognizerHandler(AppExecutors executors,
                                    Context context,
@@ -66,7 +79,8 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     public boolean startAudioInput() {
         log.d("startAudioInput");
         beginTime = System.currentTimeMillis();
-        showWakeupDailogByAudioInput();
+        mAllowStopCapture = true;
+        showWakeupDialogByAudioInput();
         return mAudioInputManager.startAudioInput(this);
     }
 
@@ -105,8 +119,10 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     /**
      * TapToTalk唤醒模式，唤醒后由云端下发识别结束事件，被动停止识别。
      */
+    @Override
     public void onTapToTalk() {
-        showWakeupDailogByAudioInput();
+        log.d("speech on tap to talk");
+        showWakeupDialogByAudioInput();
         if (tapToTalk()) {
             mAudioCueObservable.playAudioCue(AudioCueState.START_TOUCH);
         }
@@ -115,6 +131,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     /**
      * HoldToTalk唤醒模式，按下按钮识别内容，松开后停止识别。由本地控制识别内容长度，主动停止识别。
      */
+    @Override
     public void onHoldToTalk() {
         showWakeupDialogByWakeup();
         if (holdToTalk()) {
@@ -126,10 +143,13 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     /**
      * 与{@link #onHoldToTalk()}配套，用于主动结束识别。
      */
+    @Override
     public void onReleaseHoldToTalk() {
         if (mAllowStopCapture) {
+            log.d("VAD TIMEOUT TIMER TEST: onReleaseHoldToTalk");
             if (stopCapture()) {
                 mAllowStopCapture = false;
+                cancelVadTimeOutTimer();
             }
         }
     }
@@ -168,7 +188,7 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
     /**
      * 多轮中弹出唤醒提示框
      */
-    private void showWakeupDailogByAudioInput() {
+    private void showWakeupDialogByAudioInput() {
         appExecutors.mainThread().execute(() -> GlobalBottomBar.getInstance(mContext).show("", 0, false));
     }
 
@@ -189,7 +209,50 @@ public class SpeechRecognizerHandler extends AbsSpeechRecognizer
         if (diffTime < 500) {
             log.d("diffTime < 1000 :" + diffTime);
         } else {
-            onReleaseHoldToTalk();
+            log.d("VAD TIMEOUT TIMER TEST: local vad end");
+            startVadTimeOutTimer();
         }
     }
+
+    @Override
+    public void onLocalVadBegin() {
+        cancelVadTimeOutTimer();
+    }
+
+    public void onReceivedAsrText(JSONObject payloadObject) {
+        log.d("VAD TIMEOUT TIMER TEST: asr text payload: " + payloadObject.toString());
+        if (payloadObject.has("vadEnded")) {
+            try {
+                boolean vadEnded = payloadObject.getBoolean("vadEnded");
+                if (vadEnded) {
+                    mReceiveVadEnd = true;
+                    if (mVadTimeoutStart) {
+                        cancelVadTimeOutTimer();
+                        onReleaseHoldToTalk();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void startVadTimeOutTimer() {
+        log.d("VAD TIMEOUT TIMER TEST: start, mReceiveVadEnd: " + mReceiveVadEnd);
+        if (mReceiveVadEnd) {
+            onReleaseHoldToTalk();
+        } else {
+            vadTimeOutTimer.start();
+            mReceiveVadEnd = false;
+            mVadTimeoutStart = true;
+        }
+    }
+
+    private void cancelVadTimeOutTimer() {
+        log.d("VAD TIMEOUT TIMER TEST: cancel");
+        vadTimeOutTimer.cancel();
+        mReceiveVadEnd = false;
+        mVadTimeoutStart = false;
+    }
+
 }

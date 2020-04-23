@@ -41,12 +41,13 @@ import org.json.JSONObject;
 import java.util.concurrent.TimeUnit;
 
 import static com.azero.sampleapp.util.Utils.stringForTime;
-public class PlayerInfoFragment extends BasePlayerInfoFragment{
+
+public class PlayerInfoFragment extends BasePlayerInfoFragment {
     private static final String MODEL_LOOP = "LOOP";
     private static final String MODEL_SHUFFLE = "SHUFFLE";
     private static final String MODEL_SINGLE = "SINGLE_LOOP";
     protected ImageButton mControlPrev, mControlNext;
-    protected ToggleButton mControlPlayPause,playModelToggle;
+    protected ToggleButton mControlPlayPause, playModelToggle;
     protected TextView mProgressTime, mEndTime;
     protected SeekBar mProgress;
     private TextView mTitle;
@@ -56,12 +57,13 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     private Group progressGroup;
     private MediaPlayerHandler mMediaPlayer;
 
-    public PlayerInfoFragment() { }
+    public PlayerInfoFragment() {
+    }
 
     public static PlayerInfoFragment newInstance(String template) {
         PlayerInfoFragment fragment = new PlayerInfoFragment();
         Bundle args = new Bundle();
-        args.putString(Constant.EXTRA_TEMPLATE,template);
+        args.putString(Constant.EXTRA_TEMPLATE, template);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,15 +81,15 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
         mTitleSubtext1 = rootView.findViewById(R.id.titleSubtext1);
         mTitleSubtext2 = rootView.findViewById(R.id.titleSubtext2);
         mArt = rootView.findViewById(R.id.art);
-        mControlPrev = rootView.findViewById( R.id.prevControlButton );
-        mControlPlayPause = rootView.findViewById( R.id.playControlButton );
-        playModelToggle = rootView.findViewById( R.id.playModelToggle );
-        mControlNext = rootView.findViewById( R.id.nextControlButton );
+        mControlPrev = rootView.findViewById(R.id.prevControlButton);
+        mControlPlayPause = rootView.findViewById(R.id.playControlButton);
+        playModelToggle = rootView.findViewById(R.id.playModelToggle);
+        mControlNext = rootView.findViewById(R.id.nextControlButton);
 
-        mProgress = rootView.findViewById( R.id.mediaProgressBar );
-        mProgressTime = rootView.findViewById( R.id.mediaProgressTime );
-        mEndTime = rootView.findViewById( R.id.mediaEndTime );
-        progressGroup = rootView.findViewById( R.id.progressGroup );
+        mProgress = rootView.findViewById(R.id.mediaProgressBar);
+        mProgressTime = rootView.findViewById(R.id.mediaProgressTime);
+        mEndTime = rootView.findViewById(R.id.mediaEndTime);
+        progressGroup = rootView.findViewById(R.id.progressGroup);
 
         mControlPlayPause.setEnabled(false);
         mControlPlayPause.setChecked(true);
@@ -103,17 +105,17 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
         mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-               if(fromUser){
-                   //直接拖到头状态会有问题
-                   if ((progress = seekBar.getProgress()) == 1000) {
-                       progress = 999;
-                   }
-                   long duration = mMediaPlayer.getDuration();
-                   long position = progress * duration / 1000L;
-                   mEndTime.setText(stringForTime((int) duration));
-                   mProgressTime.setText(stringForTime((int) position));
-                   mMediaPlayer.setPosition(position);
-               }
+                if (fromUser) {
+                    //直接拖到头状态会有问题
+                    if ((progress = seekBar.getProgress()) == 1000) {
+                        progress = 999;
+                    }
+                    long duration = mMediaPlayer.getDuration();
+                    long position = progress * duration / 1000L;
+                    mEndTime.setText(stringForTime((int) duration));
+                    mProgressTime.setText(stringForTime((int) position));
+                    mMediaPlayer.setPosition(position);
+                }
             }
 
             @Override
@@ -131,21 +133,21 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
         log.e("lazyLoad*********");
     }
 
-    private void  initClicks(){
+    private void initClicks() {
         addDisposable(RxView.clicks(mControlPrev)
-                .throttleFirst(500,TimeUnit.MILLISECONDS)
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(unit -> {
                     log.e("mControlPrev click event");
                     AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_PREVIOUS);
                 }));
         addDisposable(RxView.clicks(mControlNext)
-                .throttleFirst(500,TimeUnit.MILLISECONDS)
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(unit -> {
                     log.e("mControlNext click event");
                     AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_NEXT);
                 }));
         addDisposable(RxView.clicks(mControlPlayPause)
-                .throttleFirst(500,TimeUnit.MILLISECONDS)
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(unit -> {
                     log.e("mControlPlayPause click event");
                     if (mControlPlayPause.isChecked()) {
@@ -155,7 +157,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
                     }
                 }));
         addDisposable(RxView.clicks(playModelToggle)
-                .throttleFirst(500,TimeUnit.MILLISECONDS)
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(unit -> {
                     log.e("playModelToggle click event");
                     changePlayModel(playModelToggle.getTag().toString());
@@ -169,17 +171,17 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
         if (!"RenderPlayerInfo".equals(type)) {
             return;
         }
-        if(playerInfo.has("content")){
+        if (playerInfo.has("content")) {
             JSONObject content = playerInfo.getJSONObject("content");
             String title = content.has("title") ? content.getString("title") : "";
             String artist = "";
             String album = "";
-            if(content.has("provider")){
+            if (content.has("provider")) {
                 JSONObject provider = content.getJSONObject("provider");
                 artist = provider.has("name") ? provider.getString("name") : "";
                 album = provider.has("album") ? provider.getString("album") : "";
             }
-            setPlayerInfo(title, artist,album);
+            setPlayerInfo(title, artist, album);
         }
         //更新按钮状态和播放信息
         JSONArray controls = playerInfo.getJSONArray("controls");
@@ -189,7 +191,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
                 final boolean enabled = control.getBoolean("enabled");
                 final boolean selected = control.getBoolean("selected");
                 final String name = control.getString("name");
-                updateControlButton(name, enabled,selected);
+                updateControlButton(name, enabled, selected);
             } else if (control.getString("type").equals("TOGGLE")) {
                 final boolean selected = control.getBoolean("selected");
                 final boolean enabled = control.getBoolean("enabled");
@@ -200,7 +202,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     }
 
     public void updateControlButton(final String name, final boolean enabled, final boolean selected) {
-        log.e("updateControlButton:"+name+"="+enabled+" selected:"+selected);
+        log.e("updateControlButton:" + name + "=" + enabled + " selected:" + selected);
         switch (name) {
             case "PREVIOUS":
                 mControlPrev.setEnabled(enabled);
@@ -220,21 +222,21 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     public void updateControlToggle(final String name, final boolean enabled, final boolean selected) {
         switch (name) {
             case "SHUFFLE":
-                if(selected){
+                if (selected) {
                     playModelToggle.setEnabled(enabled);
                     playModelToggle.setSelected(selected);
                     playModelToggle.setTag(MODEL_SHUFFLE);
                 }
                 break;
             case "LOOP":
-                if(selected){
+                if (selected) {
                     playModelToggle.setEnabled(enabled);
                     playModelToggle.setSelected(selected);
                     playModelToggle.setTag(MODEL_LOOP);
                 }
                 break;
             case "SINGLE_LOOP":
-                if(selected){
+                if (selected) {
                     playModelToggle.setEnabled(enabled);
                     playModelToggle.setSelected(selected);
                     playModelToggle.setTag(MODEL_SINGLE);
@@ -245,7 +247,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     }
 
 
-    private void setPlayModel(String playModel){
+    private void setPlayModel(String playModel) {
         int playModelRes = R.drawable.icon_music_loop;
         switch (playModel) {
             case MODEL_LOOP:
@@ -261,10 +263,10 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
         playModelToggle.setButtonDrawable(getResources().getDrawable(playModelRes));
     }
 
-    public void setPlayerInfo(final String title, final String artist,String album) {
-           mTitle.setText(title);
-           mTitleSubtext1.setText(artist);
-           mTitleSubtext2.setText(String.format(getString(R.string.album_info),album));
+    public void setPlayerInfo(final String title, final String artist, String album) {
+        mTitle.setText(title);
+        mTitleSubtext1.setText(artist);
+        mTitleSubtext2.setText(String.format(getString(R.string.album_info), album));
     }
 
     public void start() {
@@ -277,21 +279,22 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     public void stop() {
         mControlPlayPause.setChecked(false);
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void receiverUpdate(PushMessage pushMessage){
-        switch (pushMessage.type){
-          case PushMessage.UPDATE_TEMPLATE:
-              log.e("receiverUpdate==UPDATE_TEMPLATE");
-              try {
-                  JSONObject template = new JSONObject(pushMessage.getTemplate());
-                  ConfigureTemplateView.configurePlayerInfo(this, template);
-              } catch (JSONException e) {
-                  log.e(e.getMessage());
-                  getActivity().finish();
-              }
-              break;
+    public void receiverUpdate(PushMessage pushMessage) {
+        switch (pushMessage.type) {
+            case PushMessage.UPDATE_TEMPLATE:
+                log.e("receiverUpdate==UPDATE_TEMPLATE");
+                try {
+                    JSONObject template = new JSONObject(pushMessage.getTemplate());
+                    ConfigureTemplateView.configurePlayerInfo(this, template);
+                } catch (JSONException e) {
+                    log.e(e.getMessage());
+                    getActivity().finish();
+                }
+                break;
             case PushMessage.UPDATE_PLAYERINFO:
-                log.e("receiverUpdate==UPDATE_PLAYERINFO");
+                log.d("receiverUpdate==UPDATE_PLAYERINFO");
                 try {
                     executeRenderPlayerInfo(pushMessage.getPayload());
                 } catch (JSONException e) {
@@ -303,7 +306,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
                 long position = pushMessage.getPosition();
                 long pos = 0;
                 if (mMediaPlayer.getDuration() != 0) {
-                    pos = 1000L*position / mMediaPlayer.getDuration();
+                    pos = 1000L * position / mMediaPlayer.getDuration();
                 }
                 mProgress.setProgress((int) pos);
                 mEndTime.setText(stringForTime((int) mMediaPlayer.getDuration()));
@@ -314,8 +317,8 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void mediaStateChange(MediaPlayer.MediaState mediaState){
-        log.d("mediaStateChange***"+mediaState);
+    public void mediaStateChange(MediaPlayer.MediaState mediaState) {
+        log.d("mediaStateChange***" + mediaState);
         switch (mediaState) {
             case STOPPED:
                 stop();
@@ -350,7 +353,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
     }
 
 
-    public void changePlayModel(String playModel){
+    public void changePlayModel(String playModel) {
         Command command;
         switch (playModel) {
             case MODEL_LOOP:
@@ -370,7 +373,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment{
                 command = Command.CMD_PLAY_LOOP;
                 break;
         }
-       // setPlayModel(playModelToggle.getTag().toString());
+        // setPlayModel(playModelToggle.getTag().toString());
         AzeroManager.getInstance().executeCommand(command);
     }
 

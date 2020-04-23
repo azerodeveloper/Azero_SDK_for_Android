@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019 SoundAI. All Rights Reserved
+ * Copyright (c) 2019 SoundAI. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -27,12 +27,9 @@ import android.widget.TextView;
 
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.template.BaseDisplayCardActivity;
-import com.azero.sdk.AzeroManager;
-import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 import com.azero.sampleapp.activity.weather.adapter.MainAdapter;
 import com.azero.sampleapp.activity.weather.data.Weather;
+import com.azero.sampleapp.activity.weather.data.WeatherAir;
 import com.azero.sampleapp.activity.weather.fragment.WeatherAirInfoFragment;
 import com.azero.sampleapp.activity.weather.fragment.WeatherForecastFragment;
 import com.azero.sampleapp.activity.weather.fragment.WeatherForecastInfoFragment;
@@ -41,6 +38,12 @@ import com.azero.sampleapp.activity.weather.fragment.WeatherNotSupportFragment;
 import com.azero.sampleapp.activity.weather.fragment.WeatherNowInfoFragment;
 import com.azero.sampleapp.activity.weather.fragment.WeatherSuggestFragment;
 import com.azero.sampleapp.activity.weather.widget.ViewPagerScroller;
+import com.azero.sampleapp.util.DateUtils;
+import com.azero.sdk.AzeroManager;
+import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.common.util.CollectionUtils;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,13 +166,13 @@ public class WeatherActivity extends BaseDisplayCardActivity implements WeatherF
             mainAdapter.notifyDataSetChanged();
             return;
         }
-
-        if (weatherInfo.getNow() != null) {
+        if (weatherInfo.getNow() != null && DateUtils.isToday(weatherInfo.getDate())) {
             mList.add(weatherInfoFragment);
         } else if (weatherInfo.getWeather() != null) {
             mList.add(weatherForecastInfoFragment);
         }
-        if (weatherInfo.getAir() != null && weatherInfo.getUv() != null) {
+        WeatherAir air = weatherInfo.getAir() != null ? weatherInfo.getAir() : getSpecificDateAir(weatherInfo);
+        if (air != null || weatherInfo.getUv() != null) {
             mList.add(weatherAirInfoFragment);
         }
         if (weatherInfo.getSuggestion() != null) {
@@ -179,18 +182,15 @@ public class WeatherActivity extends BaseDisplayCardActivity implements WeatherF
             mList.add(weatherForecastFragment);
         }
         mainAdapter.notifyDataSetChanged();
-        return;
-
     }
 
     private void updateView() {
         if (weatherInfo != null) {
 
-            titleDayView.setText(weatherInfo.getDay());
-            titleWeekDayView.setText(weatherInfo.getWeak());
+            titleDayView.setText(weatherInfo.getDate());
+            titleWeekDayView.setText(weatherInfo.getWeek());
             titleLocationView.setText(weatherInfo.getCity());
             String url = null;
-            ;
             if (weatherInfo.getNow() != null) {
                 url = weatherInfo.getNow().getBackgroundUrl();
             } else if (weatherInfo.getWeather() != null) {
@@ -202,6 +202,20 @@ public class WeatherActivity extends BaseDisplayCardActivity implements WeatherF
                 backgroundView.setImageResource(R.drawable.weather_fine_bg);
             }
         }
+    }
+
+    private WeatherAir getSpecificDateAir(Weather weatherInfo) {
+        String date = weatherInfo.getDate();
+        List<WeatherAir> airList = weatherInfo.getAirs();
+        if (CollectionUtils.isEmpty(airList)) {
+            return null;
+        }
+        for (WeatherAir air : airList) {
+            if (TextUtils.equals(air.getDate(), date)) {
+                return air;
+            }
+        }
+        return null;
     }
 
     @Override

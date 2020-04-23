@@ -1,8 +1,6 @@
 package com.azero.sampleapp.activity.weather.adapter;
 
 /*
-https://www.jianshu.com/p/8f8ccdcf3580
-
 Copyright (c) $today.year SoundAI. All Rights Reserved
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with

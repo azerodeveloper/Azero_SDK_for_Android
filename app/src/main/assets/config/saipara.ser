@@ -34,6 +34,7 @@
 --mic.kAsrRecordOn=1
 --mic.kWakeRecordOn=1
 --mic.kGscInRecordOn=1
+--mic.kLVadEnd=50
 
 --paraload.corp=sai
 --paraload.mic_num=4

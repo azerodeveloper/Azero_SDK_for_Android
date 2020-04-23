@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
@@ -48,13 +49,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import androidx.annotation.RequiresApi;
+
 public class Utils {
 
-    public static String getDeviceSn(Context context){
+    public static String getDeviceSn(Context context) {
         String imei = Utils.getimei(context);
         String mac = Utils.getMac(context);
-        String devicesn = (imei== null)? mac :imei;
-        devicesn = (devicesn == null)? "test_app": devicesn;
+        String devicesn = (imei == null) ? mac : imei;
+        devicesn = (devicesn == null) ? "test_app" : devicesn;
         return devicesn;
     }
 
@@ -127,6 +130,7 @@ public class Utils {
         return "";
     }
 
+    @SuppressLint("HardwareIds")
     public static String getimei(@NonNull Context context) {
         Objects.requireNonNull(context);
 
@@ -141,16 +145,14 @@ public class Utils {
         String imei = null;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    imei = telephonyManager.getImei();
-                } else {
-                    imei = telephonyManager.getDeviceId();
-                }
+                imei = telephonyManager.getDeviceId();
                 return imei;
             } catch (Exception e) {
                 e.printStackTrace();
                 return imei;
             }
+        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            return imei = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID).toString();
         } else {
             try {
                 imei = telephonyManager.getImei();
@@ -339,7 +341,7 @@ public class Utils {
         return false;
     }
 
-    public static void showAlertDialog(Context context, String title , String message){
+    public static void showAlertDialog(Context context, String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message)
                 .setTitle(title);

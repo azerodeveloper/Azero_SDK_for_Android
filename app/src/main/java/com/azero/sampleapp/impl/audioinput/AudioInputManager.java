@@ -63,8 +63,11 @@ public class AudioInputManager extends InputManager {
 
             @Override
             public void onVadCallback(int result) {
+                log.d("vad: " + result);
                 if (result == 1 && localVadListener != null) {
                     localVadListener.onLocalVadEnd();
+                } else if (localVadListener != null && result == 0) {
+                    localVadListener.onLocalVadBegin();
                 }
             }
 
@@ -179,6 +182,7 @@ public class AudioInputManager extends InputManager {
 
     public interface LocalVadListener {
         void onLocalVadEnd();
+        void onLocalVadBegin();
     }
 
     private void notifyDataAvailableToVoIpInputConsumers(byte[] data, int size) {

@@ -54,7 +54,7 @@ import io.reactivex.disposables.Disposable;
 public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implements DownloadHelper.OnDownloadListener, View.OnClickListener {
     private String title;
     private File lyricFile;
-    private ImageView ivBg,ivLogo;
+    private ImageView ivBg, ivLogo;
     private TextView mHeader;
     private ViewPager mViewPager;
     private PushMessage pushMessage;
@@ -82,22 +82,25 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         ivBg = findViewById(R.id.iv_bg);
         ivLogo = findViewById(R.id.iv_logo);
         mViewPager = findViewById(R.id.viewPager);
-        requestPremission();
+        requestPermission();
         initViewPager();
         initMediaState();
         registerTemplate();
         mBtnBack.setOnClickListener(this);
         compositeDisposable = new CompositeDisposable();
-        GlideManager.loadImgWithBlur(this,R.drawable.img_default,ivBg);
+        GlideManager.loadImgWithBlur(this, R.drawable.img_default, ivBg);
     }
-    private void requestPremission(){
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+
+    private void requestPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
     }
-    private void initViewPager(){
+
+    private void initViewPager() {
         playerInfoPagerAdapter = new PlayerInfoPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(playerInfoPagerAdapter);
+        log.d("init view pager!");
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -107,10 +110,10 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
             @Override
             public void onPageSelected(int position) {
                 clearShowLyric();
-                if(position==1){
+                if (position == 1) {
                     EventBus.getDefault().post(new PushMessage(PushMessage.UPDATE_LYRIC));
                     mHeader.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     mHeader.setVisibility(View.GONE);
                 }
             }
@@ -121,13 +124,14 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
             }
         });
     }
-    private void registerTemplate(){
+
+    private void registerTemplate() {
         templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
         templateDispatcher = new TemplateDispatcher() {
             @Override
             public void renderTemplate(String payload, String type) {
                 super.renderTemplate(payload, type);
-                log.e("registerTemplateDispatchedListener renderTemplate"+payload+"  type="+type);
+                log.e("registerTemplateDispatchedListener renderTemplate" + payload + "  type=" + type);
             }
 
             @Override
@@ -142,21 +146,23 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         templateRuntimeHandler.registerTemplateDispatchedListener(templateDispatcher);
     }
 
-    private void initMediaState(){
+    private void initMediaState() {
         mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
-        log.e("mMediaPlayer: "+mMediaPlayer.toString());
-        mediaStateChangeListener = new  MediaPlayer.OnMediaStateChangeListener() {
+        log.e("v: " + mMediaPlayer.toString());
+        mediaStateChangeListener = new MediaPlayer.OnMediaStateChangeListener() {
             @Override
             public void onMediaError(String playerName, String msg, MediaPlayer.MediaError mediaError) {
-                log.e("playerName: " + playerName + " reason: " + msg + " Error:" + mediaError.toString());
+                log.d("playerName: " + playerName + " reason: " + msg + " Error:" + mediaError.toString());
             }
 
             @Override
             public void onMediaStateChange(String playerName, MediaPlayer.MediaState mediaState) {
-                log.e("onMediaStateChange*********"+mediaState);
-                PushMessage pushMessage = new PushMessage(PushMessage.MEDIASTATE_PLAYING);
-                pushMessage.setFile(lyricFile);
-                EventBus.getDefault().post(pushMessage);
+                log.d("onMediaStateChange*********" + mediaState);
+                if (mediaState.equals(MediaPlayer.MediaState.BUFFERING)) {
+                    PushMessage pushMessage = new PushMessage(PushMessage.MEDIASTATE_PLAYING);
+                    pushMessage.setFile(lyricFile);
+                    EventBus.getDefault().post(pushMessage);
+                }
             }
 
             @Override
@@ -190,7 +196,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         mHeader.setVisibility(View.GONE);
         String data = intent.getStringExtra(Constant.EXTRA_TEMPLATE);
         configTemplate(data);
-        if(hasLyrics){
+        if (hasLyrics) {
             mHeader.setText(title);
             autoShowLyric();
         }
@@ -199,16 +205,16 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
     /**
      * 10s后自动跳转到歌词
      */
-    private void autoShowLyric(){
-        Disposable disposable =  Observable.timer(10, TimeUnit.SECONDS)
+    private void autoShowLyric() {
+        Disposable disposable = Observable.timer(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aLong->mViewPager.setCurrentItem(1));
+                .subscribe(aLong -> mViewPager.setCurrentItem(1));
         compositeDisposable.add(disposable);
     }
 
-    private void configTemplate(String data){
+    private void configTemplate(String data) {
         try {
-            log.e("template"+data);
+            log.e("template" + data);
             playerInfoPagerAdapter.setTemplate(data);
             JSONObject template = new JSONObject(data);
             String lyricUrl;
@@ -218,7 +224,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
                 if (provider.has("logo")) {
                     JSONObject logo = provider.getJSONObject("logo");
                     String url = getImageUrl(logo);
-                    GlideManager.loadImg(this,url,ivLogo,100,100);
+                    GlideManager.loadImg(this, url, ivLogo, 100, 100);
                 }
 
                 title = template.has("title")
@@ -229,16 +235,16 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
                     hasLyrics = true;
                     playerInfoPagerAdapter.setPageCount(2);
                     String pathName = FileUtils.getExternalStorageDirectory();
-                    downloadHelper.download(lyricUrl, pathName,fileName, this);
+                    downloadHelper.download(lyricUrl, pathName, fileName, this);
 
-                }else{
+                } else {
                     sendClearLyricMsg();
                 }
                 playerInfoPagerAdapter.notifyDataSetChanged();
                 if (template.has("art")) {
                     JSONObject art = template.getJSONObject("art");
                     String url = getImageUrl(art);
-                    GlideManager.loadImgWithBlur(this,url,ivBg);
+                    GlideManager.loadImgWithBlur(this, url, ivBg);
                 }
             }
             PushMessage pushMessage = new PushMessage(PushMessage.UPDATE_TEMPLATE);
@@ -250,11 +256,11 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         }
     }
 
-    private void sendClearLyricMsg(){
+    private void sendClearLyricMsg() {
         hasLyrics = false;
         playerInfoPagerAdapter.setPageCount(1);
         playerInfoPagerAdapter.notifyDataSetChanged();
-        EventBus.getDefault().post( new PushMessage(PushMessage.CLEAR_LYRIC));
+        EventBus.getDefault().post(new PushMessage(PushMessage.CLEAR_LYRIC));
     }
 
     private static String getImageUrl(JSONObject image) {
@@ -296,7 +302,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
 
     @Override
     public void onDownloadSuccess(File file) {
-        log.e("onDownloadSuccess****"+file.getAbsolutePath());
+        log.e("onDownloadSuccess****" + file.getAbsolutePath());
         lyricFile = file;
         pushMessage = new PushMessage(PushMessage.SETUP_LYRIC);
         pushMessage.setFile(file);
@@ -310,7 +316,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
 
     @Override
     public void onDownloadFailed(Exception e) {
-        EventBus.getDefault().post( new PushMessage(PushMessage.CLEAR_LYRIC));
+        EventBus.getDefault().post(new PushMessage(PushMessage.CLEAR_LYRIC));
     }
 
     @Override
@@ -320,8 +326,8 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         }
     }
 
-    public void clearShowLyric(){
-        if(compositeDisposable!=null){
+    public void clearShowLyric() {
+        if (compositeDisposable != null) {
             compositeDisposable.clear();
         }
     }
@@ -329,13 +335,13 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(pushMessage!=null){
+        if (pushMessage != null) {
             EventBus.getDefault().removeStickyEvent(pushMessage);
         }
-        if(templateRuntimeHandler!=null&&templateDispatcher!=null){
+        if (templateRuntimeHandler != null && templateDispatcher != null) {
             templateRuntimeHandler.unregisterTemplateDispatchedListener(templateDispatcher);
         }
-        if(mMediaPlayer!=null&&mediaStateChangeListener!=null){
+        if (mMediaPlayer != null && mediaStateChangeListener != null) {
             mMediaPlayer.removeOnMediaStateChangeListener(mediaStateChangeListener);
         }
         clearShowLyric();

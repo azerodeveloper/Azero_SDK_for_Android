@@ -20,37 +20,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerInfoPagerAdapter extends FragmentStatePagerAdapter {
-    private static  int PAGE_COUNT = 1;
+    private static int PAGE_COUNT = 1;
     public BasePlayerInfoFragment[] fragments = new BasePlayerInfoFragment[2];
     private List<BasePlayerInfoFragment> fragmentList = new ArrayList<>();
     private String template;
+
     public PlayerInfoPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void setFragments(List<BasePlayerInfoFragment> fragmentList){
+    public void setFragments(List<BasePlayerInfoFragment> fragmentList) {
         this.fragmentList = fragmentList;
     }
 
-    public void setPageCount(int pageCount){
+    public void setPageCount(int pageCount) {
         PAGE_COUNT = pageCount;
     }
 
-    public void setTemplate(String template){
+    public void setTemplate(String template) {
         this.template = template;
     }
 
     @Override
     public Fragment getItem(int position) {
-       if(fragments[position]==null){
-         switch (position){
-             case 0:
-                 fragments[position] = PlayerInfoFragment.newInstance(template);
-                 break;
-             case 1:
-                 fragments[position] = PlayerInfoLyricFragment.newInstance(template);
-                 break;
-         }
+        if (fragments[position] == null) {
+            switch (position) {
+                case 0:
+                    fragments[position] = PlayerInfoFragment.newInstance(template);
+                    break;
+                case 1:
+                    fragments[position] = PlayerInfoLyricFragment.newInstance(template);
+                    break;
+            }
         }
         return fragments[position];
     }
@@ -62,9 +63,9 @@ public class PlayerInfoPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        if(PAGE_COUNT==2){
+        if (PAGE_COUNT == 2) {
             return POSITION_UNCHANGED;
-        }else{
+        } else {
             return POSITION_NONE;
         }
     }

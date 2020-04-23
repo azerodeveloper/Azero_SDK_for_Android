@@ -25,7 +25,7 @@ public class Suggestion implements Parcelable {
     private String brief;
     private String details;
     private String iconUrl;
-    private String suggest;
+    private String suggestion;
 
 
     public String getBrief() {
@@ -52,12 +52,12 @@ public class Suggestion implements Parcelable {
         this.iconUrl = iconUrl;
     }
 
-    public String getSuggest() {
-        return suggest;
+    public String getSuggestion() {
+        return suggestion;
     }
 
-    public void setSuggest(String suggest) {
-        this.suggest = suggest;
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
     }
 
     public Suggestion() {
@@ -73,14 +73,14 @@ public class Suggestion implements Parcelable {
         dest.writeString(this.brief);
         dest.writeString(this.details);
         dest.writeString(this.iconUrl);
-        dest.writeString(this.suggest);
+        dest.writeString(this.suggestion);
     }
 
     protected Suggestion(Parcel in) {
         this.brief = in.readString();
         this.details = in.readString();
         this.iconUrl = in.readString();
-        this.suggest = in.readString();
+        this.suggestion = in.readString();
     }
 
     public static final Creator<Suggestion> CREATOR = new Creator<Suggestion>() {

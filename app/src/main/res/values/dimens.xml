@@ -28,6 +28,7 @@
     <dimen name="weather_air_layout_margin_left">24dp</dimen>
     <dimen name="weather_air_layout_margin_top">76dp</dimen>
     <dimen name="weather_suggest_text_view_size">93dp</dimen>
+    <dimen name="weather_suggest_text_view_size_single">150dp</dimen>
     <dimen name="weather_suggest_text_thumb_width">8dp</dimen>
     <dimen name="weather_suggest_text_track_width">5dp</dimen>
     <dimen name="weather_suggest_text_size">30sp</dimen>

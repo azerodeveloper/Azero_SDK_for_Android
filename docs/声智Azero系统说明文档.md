@@ -92,6 +92,7 @@ Directive接收类需要预先实现CapabilityConfigurationInterface和Capabilit
 - **server** 此选项默认Config.SERVER.PRO,为当前的线上server , 除非特殊联调情况，请勿使用其他选项，否则会存在无法使用的情况
 - **enableLocalVAD** 是否启用本地vad检测，默认启用
 - **setTimeoutList** 设置Template过期消失时间，设置过期时间之后，template将在过期时间后自动消失，具体请参考示例代码
+- **setShowSetVolume** 配置语音调节音量时是否显示弹窗（added v1.4.0）
 
 示例代码如下：
 
@@ -104,6 +105,8 @@ Config config = new Config(
         Config.SERVER.PRO,                      //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
         Setting.enableLocalVAD                  //localVAD  是否使用本地VAD
 );
+//配置语音调节音量时音量是否显示弹窗，true为显示
+config.setShowSetVolume(true);
 //定义界面消失时间，不填则使用如下默认值
 config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
         //Template界面在TTS播放完后消失的时间

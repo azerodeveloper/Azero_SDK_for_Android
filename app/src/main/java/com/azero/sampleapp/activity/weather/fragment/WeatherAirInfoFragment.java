@@ -1,6 +1,6 @@
 
 /*
-* Copyright (c) 2019 SoundAI. All Rights Reserved
+ * Copyright (c) 2019 SoundAI. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -24,8 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.azero.sampleapp.R;
-import com.bumptech.glide.Glide;
 import com.azero.sampleapp.activity.weather.widget.SquareTextView;
+import com.bumptech.glide.Glide;
 
 public class WeatherAirInfoFragment extends WeatherFragmentBase {
     private static final String ARG_WEATHER_INFO = "ARG_WEATHER_INFO";
@@ -35,6 +35,11 @@ public class WeatherAirInfoFragment extends WeatherFragmentBase {
     private TextView ultravioletRayValue;
     private ImageView airQualityIcon;
     private ImageView ultravioletRayIcon;
+    private ViewGroup multiContainer;
+    private ViewGroup singleContainer;
+    private TextView singleInfoName;
+    private SquareTextView singleInfoLevel;
+    private TextView singleInfoValue;
 
     public WeatherAirInfoFragment() {
     }
@@ -65,26 +70,49 @@ public class WeatherAirInfoFragment extends WeatherFragmentBase {
     }
 
     public void initView(View view) {
-
         airQualityInfo = view.findViewById(R.id.air_quality_info);
         airQualityValue = view.findViewById(R.id.air_quality_value);
         ultravioletRayInfo = view.findViewById(R.id.ultraviolet_ray_info);
         ultravioletRayValue = view.findViewById(R.id.ultraviolet_ray_value);
         airQualityIcon = view.findViewById(R.id.air_quality_icon);
         ultravioletRayIcon = view.findViewById(R.id.ultraviolet_ray_icon);
+        multiContainer = view.findViewById(R.id.multi_info_container);
+        singleContainer = view.findViewById(R.id.single_info_container);
+        singleInfoName = view.findViewById(R.id.single_info_name);
+        singleInfoLevel = view.findViewById(R.id.single_info_level);
+        singleInfoValue = view.findViewById(R.id.single_info_value);
     }
 
     protected void updateView() {
         if (weather == null) return;
-        ultravioletRayInfo.setText(weather.getUv().getBrief());
-        ultravioletRayInfo.setSweepAngle(360f * weather.getUv().getLevel() / weather.getUv().getMaxLevel());
-        ultravioletRayValue.setText(weather.getUv().getSuggest());
-        airQualityInfo.setText(weather.getAir().getQuality());
-        airQualityInfo.setSweepAngle(360f * weather.getAir().getLevel() / weather.getAir().getMaxLevel());
-        airQualityValue.setText(weather.getAir().getPm25());
-        Glide.with(this).load(weather.getAir().getIconUrl()).into(airQualityIcon);
-        Glide.with(this).load(weather.getUv().getIconUrl()).into(ultravioletRayIcon);
-
+        if (weather.getAir() != null && weather.getUv() != null) {
+            singleContainer.setVisibility(View.GONE);
+            multiContainer.setVisibility(View.VISIBLE);
+            ultravioletRayInfo.setText(weather.getUv().getBrief());
+            ultravioletRayInfo.setSweepAngle(360f * weather.getUv().getLevel() / weather.getUv().getMaxLevel());
+            ultravioletRayValue.setText(weather.getUv().getSuggest());
+            airQualityInfo.setText(weather.getAir().getQuality());
+            airQualityInfo.setSweepAngle(360f * weather.getAir().getLevel() / weather.getAir().getMaxLevel());
+            airQualityValue.setText(weather.getAir().getPm25());
+            Glide.with(this).load(weather.getAir().getIconUrl()).into(airQualityIcon);
+            Glide.with(this).load(weather.getUv().getIconUrl()).into(ultravioletRayIcon);
+        } else if (weather.getAir() != null) {
+            singleContainer.setVisibility(View.VISIBLE);
+            multiContainer.setVisibility(View.GONE);
+            singleInfoName.setText(getActivity().getResources().getString(R.string.weather_air_quality));
+            singleInfoName.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.weather_kongqizhishu, 0, 0, 0);
+            singleInfoLevel.setText(weather.getAir().getQuality());
+            singleInfoLevel.setSweepAngle(360f * weather.getAir().getLevel() / weather.getAir().getMaxLevel());
+            singleInfoValue.setText(weather.getAir().getPm25());
+        } else if (weather.getUv() != null) {
+            singleContainer.setVisibility(View.VISIBLE);
+            multiContainer.setVisibility(View.GONE);
+            singleInfoName.setText(getActivity().getResources().getString(R.string.weather_ultraviolet_ray));
+            singleInfoName.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.weather_ziwaixian, 0, 0, 0);
+            singleInfoLevel.setText(weather.getUv().getBrief());
+            singleInfoLevel.setSweepAngle(360f * weather.getUv().getLevel() / weather.getUv().getMaxLevel());
+            singleInfoValue.setText(weather.getUv().getSuggest());
+        }
     }
 
     @Override

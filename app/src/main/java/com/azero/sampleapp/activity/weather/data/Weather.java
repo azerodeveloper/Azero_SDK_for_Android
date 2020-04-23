@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019 SoundAI. All Rights Reserved
+ * Copyright (c) 2019 SoundAI. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,14 +15,12 @@ package com.azero.sampleapp.activity.weather.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.azero.sampleapp.activity.weather.data.WeatherNow;
-
 import java.util.List;
 
 public class Weather implements Parcelable {
 
-    private String day = null;
-    private String weak = null;
+    private String date = null;
+    private String week = null;
     private String city = null;
     private WeatherNow now;
     private WeatherSuggestion suggestion;
@@ -34,20 +32,20 @@ public class Weather implements Parcelable {
     private List<WeatherAir> airs;
     private String answer;
 
-    public String getDay() {
-        return day;
+    public String getDate() {
+        return date;
     }
 
-    public void setDay(String day) {
-        this.day = day;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getWeak() {
-        return weak;
+    public String getWeek() {
+        return week;
     }
 
-    public void setWeak(String weak) {
-        this.weak = weak;
+    public void setWeek(String week) {
+        this.week = week;
     }
 
     public String getCity() {
@@ -141,8 +139,8 @@ public class Weather implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.day);
-        dest.writeString(this.weak);
+        dest.writeString(this.date);
+        dest.writeString(this.week);
         dest.writeString(this.city);
         dest.writeParcelable(this.now, flags);
         dest.writeParcelable(this.suggestion, flags);
@@ -156,8 +154,8 @@ public class Weather implements Parcelable {
     }
 
     protected Weather(Parcel in) {
-        this.day = in.readString();
-        this.weak = in.readString();
+        this.date = in.readString();
+        this.week = in.readString();
         this.city = in.readString();
         this.now = in.readParcelable(WeatherNow.class.getClassLoader());
         this.suggestion = in.readParcelable(WeatherSuggestion.class.getClassLoader());

@@ -12,8 +12,6 @@
  */
 package com.azero.sampleapp.activity.playerinfo.bean;
 
-import com.azero.platforms.iface.MediaPlayer;
-
 import java.io.File;
 
 public class PushMessage {
