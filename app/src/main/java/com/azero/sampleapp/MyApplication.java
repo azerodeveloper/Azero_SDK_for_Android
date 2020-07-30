@@ -42,6 +42,7 @@ import com.azero.sdk.util.log;
 
 public class MyApplication extends MultiDexApplication implements AudioInputManager.WakeUpConsumer {
     private static MyApplication instance;
+    public boolean isAudioInputting = false;
     private AppExecutors appExecutors = new AppExecutors();
     private LocalViewController mLocalViewController;
     private AzeroExpressHandler mAzeroExpressHandler;
@@ -111,6 +112,7 @@ public class MyApplication extends MultiDexApplication implements AudioInputMana
         //自定义内容模块
         mAzeroExpressHandler = new AzeroExpressHandler(appExecutors, this);
         mAzeroExpressHandler.setNavigationHandler(new NavigationHandler(this));
+        mAzeroExpressHandler.setSpeechRecognizerHandler(speechRecognizerHandler);
         AzeroManager.getInstance().setCustomAgent(mAzeroExpressHandler);
 
         //初始化本地View控制模块

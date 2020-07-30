@@ -31,7 +31,7 @@ Azero for Android 可支持在绝大多数Android设备直接安装试用，可�
 ##  注册设备<a id="account"> </a>
 
 请遵循如下步骤去Azero开发平台完成设备的注册。
-1. 登录到[Azero开放平台](https://azero.soundai.com)注册账号，账号需进行实名认证。
+1. 登录到[Azero开放平台](https://azero.soundai.com.cn)注册账号，账号需进行实名认证。
 
 2. 接下来创建设备，请参考[设备接入介绍](https://azero.soundai.com/docs/document)进行设备注册。
 
@@ -98,6 +98,13 @@ Config config = new Config(
 - Version 1.0.1及其之前版本中Launcher background图片可能会失效，届时您可选择自行替换其背景图片，也可选择试用[补丁](./patch/launcher_backgroud.patch)更新之前图片的新地址。
 - Azero 体验包中视频默认配置了蜜蜂视频App，如需体验视频交互，可以下载[公版蜜蜂视频](http://www.beevideo.tv/apk/bjPQbheOhd8%3D.html)体验；如需产品化，请联系我们获取支持。
 - Version 1.0.2及其之前版本初次安装时，可能无法录音。遇到此问题，给予录音权限之后，需重启下app即可。
+
+## 升级迁移说明<a id="update"> </a>
+
+#### Version 1.6.0
+
+- 升级到1.6.0需要整体替换 azero-release.aar、denoise-release.aar以及全量替换/app/src/main/assets/config（或者config2，如使用SystemRecord）
+- OpenDenoise的lincenseKey获取方式由AzeroManager.getInstance().generateToken(context)转换为AzeroManager.getInstance().getToken(context)
 
 ## 下载<a id="download"> </a>
 

@@ -522,15 +522,7 @@ public class ConfigureTemplateView {
             int position = content.getInt("position");
 
             // 3.检查用户的操作队列，全部处理完后才自动滑动到对应的position，防止出现页面跳动
-            List<Integer> operateQueue = na.getOperateQueue();
-            if (!operateQueue.isEmpty() && operateQueue.get(0) == position) {
-                operateQueue.remove(0);
-            }
-
-            if (position != na.getCurrentPosition() && operateQueue.isEmpty()) {
-                na.setCurrentPosition(position);
-                na.getRecyclerView().smoothScrollToPosition(position);
-            }
+            na.tryToScroll(position);
         } catch (JSONException e) {
             log.e(e.getMessage());
             na.finish();

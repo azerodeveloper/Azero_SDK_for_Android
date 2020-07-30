@@ -353,6 +353,60 @@ public void removeAzeroOSListener(AzeroOSListener listener)
 | EVENT_ENGINE_INITIALIZATION_COMPLETE |      | 系统初始化完成     |
 | EVENT_VOLUME_CHANGE                  |      | 系统音量变化       |
 
+### 播放器的状态回调
+
+获取有声类播放器状态
+
+```java
+        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        mediaPlayerHandler.setAudioPlayerListener(new MediaPlayerHandler.AudioPlayerListener(){
+        @Override
+        void onAudioPlayerStopped();
+        @Override
+        void onAudioPlayerStarted();
+        @Override
+        void prepare();
+        @Override
+        void play();
+        @Override
+        void stop();
+        @Override
+        void pause();
+        @Override
+        void resume();
+        @Override
+        void seekTo(long position);
+       
+        })
+```
+
+
+
+获取tts音频播放器状态
+
+```java
+        RawSpeakAudioMediaPlayerHandler speakerMediaPlayerHandler = AzeroManager.getInstance().getSpeakerMediaplayerHandler();
+        speakerMediaPlayerHandler.setRawSpeakAudioMediaPlayerListener(new RawSpeakAudioMediaPlayerHandler.RawSpeakAudioMediaPlayerListener() {
+            @Override
+            public void onSpeakerMediaPlayerStopped() {}
+            @Override
+            public void onSpeakerMediaPlayerStarted() {}
+            @Override
+            public void prepare() {}
+            @Override
+            public void play() {}
+            @Override
+            public void stop() {}
+            @Override
+            public void pause() {}
+            @Override
+            public void resume() {}
+            @Override
+            public void seekTo(long position) {}
+        });
+    }
+```
+
 ### 自定义指令
 
 ```java
@@ -449,7 +503,10 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
    初始化SDK时，需要从Azero SDK 中获取token:
 
    ```java
+   /** @deprecated since Version 1.6.0*/
    AzeroManager.getInstance().generateToken()
+   /** @added Version 1.6.0*/
+   AzeroManager.getInstance().getToken()
    ```
 
    初始化示例如下所示：
@@ -459,7 +516,7 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
                    true,
                    configPath,
                    "uuid",
-                   AzeroManager.getInstance().generateToken(),
+                   AzeroManager.getInstance().getToken(context),
                    new SaiClient.Callback() {
                        @Override
                        public void onAsrDataCallback(byte[] data, int size) {

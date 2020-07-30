@@ -54,6 +54,9 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
     private LauncherPagerAdapter launcherPagerAdapter;
     private LauncherViewModel launcherViewModel;
     private static String mCurrentAudioItemId;
+    private TemplateViewController mTemplateViewController;
+    private TemplateRuntimeHandler mTemplateRuntimeHandler;
+    private TemplateDispatcher mTemplateDispatch;
     private boolean isForeground = false;
 
     private static final int sPermissionRequestCode = 0;
@@ -84,7 +87,9 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
                     requests.toArray(new String[requests.size()]), sPermissionRequestCode);
         } else {
             try {
-                MyApplication.getInstance().initAzero();
+                if (!AzeroManager.getInstance().isEngineInitComplete()) {
+                    MyApplication.getInstance().initAzero();
+                }
                 create();
             } catch (RuntimeException e) {
                 Utils.showAlertDialog(this, getString(R.string.alert_azero_init_failure), "Could not start engine. Reason: \n"
@@ -129,7 +134,9 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
                     }
                 }
                 if (!any_denied) {
-                    MyApplication.getInstance().initAzero();
+                    if (!AzeroManager.getInstance().isEngineInitComplete()) {
+                        MyApplication.getInstance().initAzero();
+                    }
                     create();
                 }
             } else {
@@ -178,6 +185,10 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mTemplateRuntimeHandler != null && mTemplateDispatch != null) {
+            mTemplateRuntimeHandler.unregisterTemplateDispatchedListener(mTemplateDispatch);
+        }
+        AzeroManager.getInstance().removeAzeroOSListener(this);
         if (launcherPagerAdapter != null) {
             launcherPagerAdapter.onDestroy();
         }
@@ -195,11 +206,14 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
 
     private void initAzero() {
         log.d("initAzero");
-        TemplateViewController mTemplateViewController = new TemplateViewController(this.getApplicationContext());
-        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
-        templateRuntimeHandler.registerTemplateDispatchedListener(new TemplateDispatcher() {
+        mTemplateViewController = new TemplateViewController(this.getApplicationContext());
+        mTemplateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
+        mTemplateDispatch = new TemplateDispatcher(){
             @Override
             public void renderTemplate(String payload, String type) {
+                if (mTemplateViewController == null) {
+                    return;
+                }
                 try {
                     // Log payload
                     log.d("payload: " + payload);
@@ -277,7 +291,8 @@ public class LauncherActivity extends AppCompatActivity implements AzeroManager.
             public void clearPlayerInfo() {
                 mTemplateViewController.clearPlayerInfo();
             }
-        });
+        };
+        mTemplateRuntimeHandler.registerTemplateDispatchedListener(mTemplateDispatch);
     }
 
     @Override

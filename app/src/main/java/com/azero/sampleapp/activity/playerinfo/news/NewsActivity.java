@@ -15,12 +15,14 @@ package com.azero.sampleapp.activity.playerinfo.news;
 
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.azero.platforms.iface.MediaPlayer;
+import com.azero.sampleapp.MyApplication;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.playerinfo.BasePlayerInfoActivity;
 import com.azero.sampleapp.activity.playerinfo.news.bean.NewsInfo;
@@ -50,11 +52,20 @@ public class NewsActivity extends BasePlayerInfoActivity {
 
     private NewsAdapter mAdapter;
 
-    private int mCurrentPosition;
+    public int mTargetPosition;
 
     private boolean mShouldPlayOnStart;
 
     private MediaPlayer.OnMediaStateChangeListener mMediaStateChangeListener;
+
+    private Handler mHandler = new Handler();
+
+    // 用于应对网络出问题的情况
+    private Runnable mPendingScroll = () -> {
+        if (mRecyclerView == null) return;
+        mOperateQueue.clear();
+        mRecyclerView.smoothScrollToPosition(mTargetPosition);
+    };
 
     @Override
     protected int getLayoutResId() {
@@ -85,32 +96,23 @@ public class NewsActivity extends BasePlayerInfoActivity {
                 if (targetView == null) return;
                 int position = recyclerView.getChildAdapterPosition(
                         mSnapHelper.findSnapView(recyclerView.getLayoutManager()));
-                if (mCurrentPosition != RecyclerView.NO_POSITION && mCurrentPosition != position) {
-                    int offset = position - mCurrentPosition;
-                    if (offset > 0) {
-                        for (int i = 0; i < offset; i++) {
-                            AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_NEXT);
-                            mOperateQueue.add(++mCurrentPosition);
-                        }
-                    } else {
-                        for (int i = 0; i < -offset; i++) {
-                            AzeroManager.getInstance().executeCommand(Command.CMD_PLAY_PREVIOUS);
-                            mOperateQueue.add(--mCurrentPosition);
-                        }
-                    }
+                if (!MyApplication.getInstance().isAudioInputting &&
+                        ((!mOperateQueue.isEmpty() && mOperateQueue.get(mOperateQueue.size() - 1) != position) || mTargetPosition != position)) {
+                    AzeroManager.sendQueryText("播放第" + (position + 1) + "个");
+                    mOperateQueue.add(position);
                 }
             }
         });
 
         mMediaStateChangeListener = new MediaPlayer.OnMediaStateChangeListener() {
             @Override
-            public void onMediaError(String playerName, String msg, MediaPlayer.MediaError mediaError) {
+            public void onMediaError(String playerName, String msg, MediaPlayer.MediaError
+                    mediaError) {
                 log.e("playerName: " + playerName + " reason: " + msg + " Error:" + mediaError.toString());
             }
 
             @Override
             public void onMediaStateChange(String playerName, MediaPlayer.MediaState mediaState) {
-
                 switch (mediaState) {
                     case STOPPED:
                         mShouldPlayOnStart = true;
@@ -127,7 +129,9 @@ public class NewsActivity extends BasePlayerInfoActivity {
             public void onPositionChange(String s, long l, long l1) {
                 // do nothing
             }
-        };
+        }
+
+        ;
         MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
         mediaPlayerHandler.addOnMediaStateChangeListener(mMediaStateChangeListener);
     }
@@ -187,6 +191,23 @@ public class NewsActivity extends BasePlayerInfoActivity {
         }
     }
 
+
+    public void tryToScroll(int position) {
+        mHandler.post(() -> {
+            mTargetPosition = position;
+            if (!mOperateQueue.isEmpty() && mOperateQueue.get(0) == position) {
+                mOperateQueue.remove(0);
+            }
+            if (mOperateQueue.isEmpty()) {
+                mHandler.removeCallbacks(mPendingScroll);
+                mRecyclerView.smoothScrollToPosition(mTargetPosition);
+            } else {
+                mHandler.removeCallbacks(mPendingScroll);
+                mHandler.postDelayed(mPendingScroll, 5000);
+            }
+        });
+    }
+
     public List<NewsInfo> getDataList() {
         return mDataList;
     }
@@ -197,21 +218,5 @@ public class NewsActivity extends BasePlayerInfoActivity {
 
     public NewsAdapter getAdapter() {
         return mAdapter;
-    }
-
-    public RecyclerView getRecyclerView() {
-        return mRecyclerView;
-    }
-
-    public int getCurrentPosition() {
-        return mCurrentPosition;
-    }
-
-    public void setCurrentPosition(int position) {
-        mCurrentPosition = position;
-    }
-
-    public List<Integer> getOperateQueue() {
-        return mOperateQueue;
     }
 }

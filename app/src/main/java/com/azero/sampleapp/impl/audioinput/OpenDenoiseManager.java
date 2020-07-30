@@ -136,7 +136,7 @@ public class OpenDenoiseManager {
                 true,
                 configPath,
                 "ViewPageHelper",
-                AzeroManager.getInstance().generateToken(context),
+                AzeroManager.getInstance().getToken(context),
                 new SaiClient.Callback() {
                     @Override
                     public void onAsrDataCallback(byte[] data, int size) {
@@ -154,7 +154,7 @@ public class OpenDenoiseManager {
                     }
 
                     @Override
-                    public void onWakeupCallback(float wakeup_angle, String wakeup_word, float score, byte[] data) {
+                    public void onWakeupCallback(float wakeup_angle, String wakeup_word, float score, float energy, byte[] data) {
                         if (filterWakeup) {
                             filterWakeup = false;
                             return;
