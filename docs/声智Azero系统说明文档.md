@@ -1,3 +1,7 @@
+<div align="right">
+<img src="soundai.png" height = "30" alt="SoundAI" align=middle />
+</div>
+
 # 声智Azero系统说明文档
 
 [TOC]

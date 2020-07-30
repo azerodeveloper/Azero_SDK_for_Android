@@ -1,3 +1,7 @@
+<div align="right">
+<img src="./docs/soundai.png" height = "30" alt="SoundAI" align=middle />
+</div>
+
 # 快速试用
 
 Azero for Android 可支持在绝大多数Android设备直接安装试用，可体验Azero 默认的通用技能，覆盖了主流语音交互的大部分能力，可帮助开发者快速体验Azero的主要功能、初步了解语音交互的基本流程。
