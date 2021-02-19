@@ -37,7 +37,7 @@ Azero for Android 可支持在绝大多数Android设备直接安装试用，可�
 请遵循如下步骤去Azero开发平台完成设备的注册。
 1. 登录到[Azero开放平台](https://azero.soundai.com.cn)注册账号，账号需进行实名认证。
 
-2. 接下来创建设备，请参考[设备接入介绍](https://azero.soundai.com/docs/document)进行设备注册。
+2. 接下来创建设备，请参考[设备接入介绍](https://document-azero.soundai.com.cn/azero/IntroductionToDeviceCenter.html)进行设备注册。
 
    ![dev_reg](./docs/dev_reg.png)
 
@@ -88,7 +88,7 @@ Config config = new Config(
        *另外，因为部分设备自身的回声消除效果欠佳，可能存在自体播放声音的情况下无法唤醒的现象，解决此问题，可参看进阶文档，提供回采信号进行回声消除，可以体验到更加效果*
 
 ##  更多技能<a id="more_skill"> </a> 
-如需体验更丰富的技能和个性化定制体验，可去 **Azero开放平台 -> 技能商店** 为设备配置更多的官方或者第三方技能，或者按照 [技能接入介绍](https://azero.soundai.com/docs/document) 创建自有技能，实现定制化需求。
+如需体验更丰富的技能和个性化定制体验，可去 **Azero开放平台 -> 技能商店** 为设备配置更多的官方或者第三方技能，或者按照 [技能接入介绍](https://document-azero.soundai.com.cn/azero/IntroductionToSkillCenter.html) 创建自有技能，实现定制化需求。
 
 ## 进阶集成和调优<a id="advanced"> </a> 
 
