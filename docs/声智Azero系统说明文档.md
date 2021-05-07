@@ -97,6 +97,7 @@ Directive接收类需要预先实现CapabilityConfigurationInterface和Capabilit
 - **enableLocalVAD** 是否启用本地vad检测，默认启用
 - **setTimeoutList** 设置Template过期消失时间，设置过期时间之后，template将在过期时间后自动消失，具体请参考示例代码
 - **setShowSetVolume** 配置语音调节音量时是否显示弹窗（added v1.4.0）
+- **setCustomAudioCueMap** 设置自定义的音频提示语（added v1.7.0），具体请参考示例代码
 
 示例代码如下：
 
@@ -111,6 +112,16 @@ Config config = new Config(
 );
 //配置语音调节音量时音量是否显示弹窗，true为显示
 config.setShowSetVolume(true);
+//设置自定义的音频提示语
+Map<AbsSpeechRecognizer.AudioCueState, List<Integer>> customAudioCueMap = new HashMap<>();
+ArrayList<Integer> ids = new ArrayList<>();//多个应答语,随机播放
+ids.add(R.raw.xxx);
+customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_TOUCH, ids);
+customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_VOICE, ids);
+ArrayList<Integer> endIds = new ArrayList<>();
+endIds.add(R.raw.xxx);
+customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.END, endIds);
+config.setCustomAudioCueMap(customAudioCueMap);
 //定义界面消失时间，不填则使用如下默认值
 config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
         //Template界面在TTS播放完后消失的时间
