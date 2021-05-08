@@ -15,8 +15,8 @@ package com.azero.sampleapp.activity.alert;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;

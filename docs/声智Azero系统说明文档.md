@@ -27,7 +27,7 @@ Azero Sample提供Azero系统接入示例代码，包含语音唤醒、ASR、NLP
 
 ![](./2.png)
 
-## 1.云端大脑	
+## 1.云端大脑
 
 Azero系统的逻辑处理部分全部在云端进行，用户与端上进行的所有交互都通过Event反馈到云端，云端进行判断后下发Directive交由端上执行。比如，当用户在播放音乐时点击了暂停按钮，此时系统并不会立即调用播放器的暂停，而是上报给云端暂停事件，云端分发给Skill处理完成后，将暂停的Directive下发给端上，完成暂停的动作。
 
@@ -37,7 +37,7 @@ Azero系统的逻辑处理部分全部在云端进行，用户与端上进行的
 
 Azero系统与用户交互相关的核心控制模块主要有`FocusManager`、`SpeakerManager`、`DirectiveRouter`.
 
-### FocusManager	
+### FocusManager
 
 负责音频和界面显示焦点的管控，使用音频通道或显示通道前需要向此模块申请焦点，申请成功后才可使用，否则可能出现显示上的异常。
 
@@ -97,6 +97,7 @@ Directive接收类需要预先实现CapabilityConfigurationInterface和Capabilit
 - **enableLocalVAD** 是否启用本地vad检测，默认启用
 - **setTimeoutList** 设置Template过期消失时间，设置过期时间之后，template将在过期时间后自动消失，具体请参考示例代码
 - **setShowSetVolume** 配置语音调节音量时是否显示弹窗（added v1.4.0）
+- **setCustomAudioCueMap** 设置自定义的音频提示语（added v1.7.0），具体请参考示例代码
 
 示例代码如下：
 
@@ -111,6 +112,16 @@ Config config = new Config(
 );
 //配置语音调节音量时音量是否显示弹窗，true为显示
 config.setShowSetVolume(true);
+//设置自定义的音频提示语
+Map<AbsSpeechRecognizer.AudioCueState, List<Integer>> customAudioCueMap = new HashMap<>();
+ArrayList<Integer> ids = new ArrayList<>();//多个应答语,随机播放
+ids.add(R.raw.xxx);
+customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_TOUCH, ids);
+customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_VOICE, ids);
+ArrayList<Integer> endIds = new ArrayList<>();
+endIds.add(R.raw.xxx);
+customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.END, endIds);
+config.setCustomAudioCueMap(customAudioCueMap);
 //定义界面消失时间，不填则使用如下默认值
 config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
         //Template界面在TTS播放完后消失的时间
@@ -143,7 +154,7 @@ config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
 
 ```java
 //初始化数据读取模块
-AudioInputManager audioInputManager = new AudioInputManager(this);  
+AudioInputManager audioInputManager = new AudioInputManager(this);
 audioInputManager.addWakeUpObserver(this);
 //识别数据模块
 SpeechRecognizerHandler speechRecognizerHandler = new SpeechRecognizerHandler(
@@ -228,7 +239,7 @@ AzeroManager类实现了单例模式，提供如下获取方式
 ```java
 startEngine(@NotNull Context context,
             @NotNull Config config,
-            @NotNull HandlerContainer container) 
+            @NotNull HandlerContainer container)
 ```
 
 ### 播放控制
@@ -380,7 +391,7 @@ public void removeAzeroOSListener(AzeroOSListener listener)
         void resume();
         @Override
         void seekTo(long position);
-       
+
         })
 ```
 
@@ -421,7 +432,7 @@ public void removeAzeroOSListener(AzeroOSListener listener)
  * @return 注册是否成功
  */
 public boolean setCustomAgent(@NotNull AzeroExpress azeroExpress)
-    
+
 /**
  * 获取{@link #setCustomAgent(AzeroExpress)}设置的自定义模块
  *
@@ -484,7 +495,7 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
    		}
    	}
    }
-   
+
    dependencies {
    	implementation name: 'denoise-release', ext: 'aar'
    }
@@ -537,7 +548,7 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
                    }
    ```
 
-   
+
 
 6. #### 注册回调接口，接受并处理回调事件
 
@@ -657,7 +668,7 @@ tinycap /sdcard/test.pcm -D 0 -d 1 -c 8 -r 48000 -b 32 -p 2048 -n 2
 
    声智远场语音算法对原始音频的通道顺序存在固定要求，因此需要在将原始音频给到算法之前保证其通道顺序是符合要求的，具体要求请参考上一章中声智算法模块通道数据要求。
 
-   
+
 
    下面以环形**6mic 1ref 8ch**设备为例示范，使用Basex具体的调整通道顺序的方法如下
 
@@ -695,7 +706,7 @@ tinycap /sdcard/test.pcm -D 0 -d 1 -c 8 -r 48000 -b 32 -p 2048 -n 2
 
 **1.java.lang.UnsatisfiedLinkError: dlopen failed：library "xxx.so" not found**
 
-**RootCause:** 
+**RootCause:**
 
 使用声智录音工具basex时的一个常见库缺失错误，由于Android安全机制限制，app中无法使用系统Lib库
 

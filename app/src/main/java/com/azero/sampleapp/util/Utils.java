@@ -26,8 +26,8 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -48,8 +48,6 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
-import androidx.annotation.RequiresApi;
 
 public class Utils {
 

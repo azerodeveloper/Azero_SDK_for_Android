@@ -13,7 +13,7 @@
 
 package com.azero.sampleapp;
 
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 import com.azero.platforms.iface.config.AzeroConfiguration;
 import com.azero.sampleapp.activity.controller.LocalViewController;
@@ -26,7 +26,6 @@ import com.azero.sampleapp.impl.phonecallcontroller.PhoneCallControllerHandler;
 import com.azero.sampleapp.impl.audioinput.AudioInputManager;
 import com.azero.sampleapp.impl.audioinput.SpeechRecognizerHandler;
 import com.azero.sampleapp.impl.azeroexpress.AzeroExpressHandler;
-import com.azero.sampleapp.impl.audioinput.record.BasexRecord;
 import com.azero.sampleapp.util.Utils;
 import com.azero.platforms.iface.AlexaClient;
 import com.azero.sdk.Config;

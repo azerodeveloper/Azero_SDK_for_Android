@@ -1,6 +1,6 @@
 package com.azero.sampleapp.activity.playerinfo.bean;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class LineBean implements Comparable<LineBean>{
 

@@ -14,12 +14,11 @@
 package com.azero.sampleapp.activity.alert;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.azero.sampleapp.activity.alert.RecyclerViewHolder;
 import com.azero.sdk.util.log;
 
 import java.util.List;

@@ -17,7 +17,7 @@ package com.azero.sampleapp.activity.weather.fragment;
 import android.content.Context;
 import android.os.Bundle;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.azero.sampleapp.activity.weather.data.Weather;
 

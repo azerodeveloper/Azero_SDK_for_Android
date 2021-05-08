@@ -16,8 +16,8 @@ package com.azero.sampleapp.activity.launcher;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.MotionEvent;
 
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;

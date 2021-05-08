@@ -15,8 +15,8 @@ package com.azero.sampleapp.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.UiThread;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.annotation.UiThread;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;

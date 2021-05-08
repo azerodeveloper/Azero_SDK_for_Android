@@ -178,7 +178,6 @@ public class OpenDenoiseManager {
                         if (!mEnableLocalVad) {
                             return;
                         }
-                        log.d("localVad:" + vadResult);
                         if (filterFirstVAD) {
                             log.e("filter");
                             filterFirstVAD = false;
@@ -188,7 +187,6 @@ public class OpenDenoiseManager {
                             denoiseCallback.onVadCallback(vadResult);
                         }
                         if (vadResult == VAD_BEGIN) {
-                            log.d("lastVAD: " + lastVAD);
                             //重复收到vadBegin事件，避免重新计时
                             if (lastVAD != VAD_BEGIN) {
                                 vadbeginTimer.cancel();

@@ -14,7 +14,7 @@
 package com.azero.sampleapp.impl.audioinput;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.azero.sampleapp.Setting;
 import com.azero.sampleapp.impl.audioinput.record.Record;
@@ -63,7 +63,6 @@ public class AudioInputManager extends InputManager {
 
             @Override
             public void onVadCallback(int result) {
-                log.d("vad: " + result);
                 if (result == 1 && localVadListener != null) {
                     localVadListener.onLocalVadEnd();
                 } else if (localVadListener != null && result == 0) {

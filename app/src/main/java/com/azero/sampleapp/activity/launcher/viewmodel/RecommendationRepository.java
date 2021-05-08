@@ -14,7 +14,7 @@
 package com.azero.sampleapp.activity.launcher.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;

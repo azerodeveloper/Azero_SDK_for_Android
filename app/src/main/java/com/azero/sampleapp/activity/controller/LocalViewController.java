@@ -18,7 +18,7 @@ import android.content.Context;
 import org.json.JSONObject;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.azero.sampleapp.activity.template.QrCodeActivity;
 import com.azero.sdk.util.Constant;

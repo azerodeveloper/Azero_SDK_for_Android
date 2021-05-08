@@ -13,7 +13,7 @@
 
 package com.azero.sampleapp.activity.launcher.viewmodel;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
 

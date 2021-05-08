@@ -13,7 +13,7 @@
 package com.azero.sampleapp.activity.playerinfo.playerpager;
 
 import android.os.Bundle;
-import android.support.constraint.Group;
+import androidx.constraintlayout.widget.Group;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -92,7 +92,7 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment {
         progressGroup = rootView.findViewById(R.id.progressGroup);
 
         mControlPlayPause.setEnabled(false);
-        mControlPlayPause.setChecked(true);
+        mControlPlayPause.setChecked(false);
         initClicks();
         try {
             Bundle bundle = getArguments();
@@ -210,7 +210,6 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment {
                 break;
             case "PLAY_PAUSE":
                 mControlPlayPause.setEnabled(enabled);
-                mControlPlayPause.setChecked(selected);
                 break;
             case "NEXT":
                 mControlNext.setEnabled(enabled);
@@ -270,10 +269,8 @@ public class PlayerInfoFragment extends BasePlayerInfoFragment {
     }
 
     public void start() {
-//        mControlPrev.setEnabled(false);
         mControlPlayPause.setEnabled(true);
         mControlPlayPause.setChecked(true);
-//        mControlNext.setEnabled(false);
     }
 
     public void stop() {

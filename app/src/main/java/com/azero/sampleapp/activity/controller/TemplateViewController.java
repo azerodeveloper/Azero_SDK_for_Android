@@ -15,7 +15,7 @@ package com.azero.sampleapp.activity.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.azero.sampleapp.activity.playerinfo.playerpager.PlayerInfoViewPagerActivity;
 import com.azero.sampleapp.activity.weather.WeatherActivity;

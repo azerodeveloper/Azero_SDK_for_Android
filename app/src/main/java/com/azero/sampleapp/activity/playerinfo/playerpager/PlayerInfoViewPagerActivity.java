@@ -15,9 +15,9 @@ package com.azero.sampleapp.activity.playerinfo.playerpager;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -158,6 +158,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
             @Override
             public void onMediaStateChange(String playerName, MediaPlayer.MediaState mediaState) {
                 log.d("onMediaStateChange*********" + mediaState);
+                EventBus.getDefault().post(mediaState);
                 if (mediaState.equals(MediaPlayer.MediaState.BUFFERING)) {
                     PushMessage pushMessage = new PushMessage(PushMessage.MEDIASTATE_PLAYING);
                     pushMessage.setFile(lyricFile);

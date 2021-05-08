@@ -16,9 +16,9 @@ package com.azero.sampleapp.activity.playerinfo.news;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.azero.platforms.iface.MediaPlayer;

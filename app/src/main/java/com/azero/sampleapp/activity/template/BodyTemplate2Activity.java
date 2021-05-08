@@ -14,7 +14,7 @@
 package com.azero.sampleapp.activity.template;
 
 import android.content.Intent;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
