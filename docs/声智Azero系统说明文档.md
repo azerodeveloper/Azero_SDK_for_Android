@@ -27,7 +27,7 @@ Azero Sample提供Azero系统接入示例代码，包含语音唤醒、ASR、NLP
 
 ![](./2.png)
 
-## 1.云端大脑
+## 1.云端大脑	
 
 Azero系统的逻辑处理部分全部在云端进行，用户与端上进行的所有交互都通过Event反馈到云端，云端进行判断后下发Directive交由端上执行。比如，当用户在播放音乐时点击了暂停按钮，此时系统并不会立即调用播放器的暂停，而是上报给云端暂停事件，云端分发给Skill处理完成后，将暂停的Directive下发给端上，完成暂停的动作。
 
@@ -37,7 +37,7 @@ Azero系统的逻辑处理部分全部在云端进行，用户与端上进行的
 
 Azero系统与用户交互相关的核心控制模块主要有`FocusManager`、`SpeakerManager`、`DirectiveRouter`.
 
-### FocusManager
+### FocusManager	
 
 负责音频和界面显示焦点的管控，使用音频通道或显示通道前需要向此模块申请焦点，申请成功后才可使用，否则可能出现显示上的异常。
 
@@ -68,7 +68,7 @@ Azero系统与用户交互相关的核心控制模块主要有`FocusManager`、`
 
 ### DirectiveRouter
 
-Directive接收类需要预先实现CapabilityConfigurationInterface和CapabilityConfigurationInterface接口，并在系统启动时注册进DirectiveRouter中。在接收云端指令时，Router会根据Directive所携带的NameSpeace和Name进行分发管理。
+Directive接收类需要预先实现CapabilityConfigurationInterface和CapabilityConfigurationInterface接口，并在系统启动时注册进~~DirectiveRouter~~中。在接收云端指令时，Router会根据Directive所携带的NameSpace和Name进行分发管理。
 
 
 
@@ -92,51 +92,57 @@ Directive接收类需要预先实现CapabilityConfigurationInterface和Capabilit
 
 - **productId** 产品ID，Azero开发者网站上申请，设备信息中填写
 - **clientId** Azero开发者网站上自动生成，设备信息页可查询
-- **devicesn** 设备唯一标识，需保证该ID唯一且不能为空，示例中Utils.getimei(this)仅仅以手机imei为实例作为devicesn的一种实现方式
 - **server** 此选项默认Config.SERVER.PRO,为当前的线上server , 除非特殊联调情况，请勿使用其他选项，否则会存在无法使用的情况
-- **enableLocalVAD** 是否启用本地vad检测，默认启用
-- **setTimeoutList** 设置Template过期消失时间，设置过期时间之后，template将在过期时间后自动消失，具体请参考示例代码
-- **setShowSetVolume** 配置语音调节音量时是否显示弹窗（added v1.4.0）
-- **setCustomAudioCueMap** 设置自定义的音频提示语（added v1.7.0），具体请参考示例代码
+- **enableWakeUp**  开关唤醒，默认为true。例如场景：夜间，可关闭唤醒进入免打扰；白天，打开唤醒继续使用
+- **enableNoNeedWakeup** 开关免唤醒模式，默认为false。免唤醒模式下，不需要唤醒，直接命中技能
+- **useOpenDenoise** 是否使用降噪算法，默认为true。系统自带了Open Denoise算法库，不使用的话，直接灌原始音频
+- **enableLocalVAD**  是否使用本地VAD，默认为true。不使用，走的是云端VAD（准确度相对于本地差）
+- **showSetVolume**  调节音量时， 音量调节UI是否显示， 默认为true。
+- **ttsStreamType**  TTS播放器音频流类型：STREAM_VOICE（语音通话类流类型）、STREAM_SYSTEM（系统类流类型）、STREAM_RING（铃声类流类型）、STREAM_MUSIC（音乐类流类型，默认选择）、STREAM_ALARM（闹钟类流类型）、STREAM_NOTIFICATION（通知类流类型）
+- **timeoutList** Template 过期时间列表，主要包括：TTS播放完后消失的时间、音频播放完后界面消失时间、音频播放暂停时界面消失时间
+- **customAudioCueMap** 自定义提示语
+- **useCustomDenoise** 是否使用自定义的降噪算法， 默认为false
 
 示例代码如下：
 
 ```java
 //第一步 配置参数 注册必要模块 @{
-Config config = new Config(
-        "speaker_display_music_test",           //productID 网站申请
-        "5d71d046f3745100064ae275",             //ClientID  网站申请
-        Utils.getimei(this),                    //DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
-        Config.SERVER.PRO,                      //Server    选择使用的服务器  FAT 测试环境 PRO 正式环境
-        Setting.enableLocalVAD                  //localVAD  是否使用本地VAD
-);
-//配置语音调节音量时音量是否显示弹窗，true为显示
-config.setShowSetVolume(true);
-//设置自定义的音频提示语
-Map<AbsSpeechRecognizer.AudioCueState, List<Integer>> customAudioCueMap = new HashMap<>();
-ArrayList<Integer> ids = new ArrayList<>();//多个应答语,随机播放
-ids.add(R.raw.xxx);
-customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_TOUCH, ids);
-customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_VOICE, ids);
-ArrayList<Integer> endIds = new ArrayList<>();
-endIds.add(R.raw.xxx);
-customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.END, endIds);
-config.setCustomAudioCueMap(customAudioCueMap);
-//定义界面消失时间，不填则使用如下默认值
-config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
-        //Template界面在TTS播放完后消失的时间
-        new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_TTS_FINISHED_TIMEOUT, 8000),
-        //音频播放完后界面消失时间
-        new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_FINISHED_TIMEOUT, 300000),
-        //音频播放暂停时界面消失时间
-        new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_STOPPED_PAUSED_TIMEOUT, 300000)
-});
+	//定义界面消失时间，不填则使用如下默认值  （选配）
+    private AzeroConfiguration.TemplateRuntimeTimeout[] defaultTimeout = {
+            //Template界面在TTS播放完后消失的时间
+            new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_TTS_FINISHED_TIMEOUT, 8000),
+            //音频播放完后界面消失时间
+            new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_FINISHED_TIMEOUT, 300000),
+            //音频播放暂停时界面消失时间
+            new AzeroConfiguration.TemplateRuntimeTimeout(AzeroConfiguration.TemplateRuntimeTimeoutType.DISPLAY_CARD_AUDIO_PLAYBACK_STOPPED_PAUSED_TIMEOUT, 300000)
+    };
+    //自定义本地声音资源（选配）
+    private Map<AbsSpeechRecognizer.AudioCueState, List<Integer> customAudioCueMap = new HashMap<>();
+    customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_TOUCH, 本地资源list)；
+    customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.START_VOICE, 本地资源list)；
+    customAudioCueMap.put(AbsSpeechRecognizer.AudioCueState.END, 本地资源list)；
+     ConfigSetting config = new ConfigSetting.ConfigBuilder()
+                .setProductID("") //必配
+                .setClientID("") //必配
+                .setServerType(Config.SERVER.PRO) //必配
+                .enableWakeUp(true) //选配
+                .enableNoNeedWakeup(true) //选配
+                .useOpenDenoise(false) //选配
+                .enableLocalVAD(false) //选配
+                .showSetVolume(false) //选配
+                .setTTSStreamType(Config.TTSStreamType.STREAM_MUSIC) //选配
+                .setTemplateRuntimeTimeout(defaultTimeout) //选配
+                .setCustomAudioCueMap() //选配
+                .setUseCustomOpenDenoise(true) //选配
+                .create();
+
+        AzeroManager.getInstance().startEngine(new SystemRecord(),null,config);
 ```
 
 
 ### HandlerContainer
 
-`HandlerContainer`主要用于注册和替换自定义的播放器以及注册必要的Handler, 如SpeechRecognizerHandler是用于灌入识别数据的重要模块,为避免影响整个系统的使用，我们将其定义为必备模块，并且禁止为空。
+`HandlerContainer`主要用于注册和替换自定义的播放器以及注册必要的Handler。
 
 配置项主要包含：
 
@@ -144,42 +150,23 @@ config.setTimeoutList(new AzeroConfiguration.TemplateRuntimeTimeout[]{
 
 - setAudioHandler 有声类Handler, 当前支持SoundAI自有有声，无需另行安装
 - setMusicHandler 音乐类Handler, 当前支持SoundAI自有音乐（默认）和咪咕音乐（需另行安装并联系我们授权）
-- setSpeechRecognizer 识别数据模块，**必须**
+- setPhoneCallHandler 通话类Handler，当前支持SoundAI自有PHONE类型
 
 以`VideoHandler`为例，如想体验蜜蜂视频除了配置 HandlerContainer 中VideoHandler，还需要在Azero官网上为你填写的设备配置对应的蜜蜂视频技能。
 
+配置必要的Handler：
+
+- setSpeechRecognizer 识别模块的Handler
+
 **注：**HandlerContainer同一类别模块只支持注册一个，同时注册多个时，选择最后注册的模块。
 
-示例代码如下：
-
-```java
-//初始化数据读取模块
-AudioInputManager audioInputManager = new AudioInputManager(this);
-audioInputManager.addWakeUpObserver(this);
-//识别数据模块
-SpeechRecognizerHandler speechRecognizerHandler = new SpeechRecognizerHandler(
-         appExecutors,
-         this,
-         audioInputManager,
-         true,
-         true
-);
-//选择和注册必要模块
-HandlerContainer handlerContainer = new HandlerContainerBuilder(this)
-         .setAudioHandler(HandlerContainerBuilder.AUDIO.SOUNDAI)
-         .setMusicHandler(HandlerContainerBuilder.MUSIC.MIGU)
-         .setVideoHandler(HandlerContainerBuilder.VIDEO.MIFENG)
-         .setSpeechRecognizer(speechRecognizerHandler)
-         .create();
-
-```
 
 ### 启动Azero
 配置完上述的参数，就可以初始化Azero。
 ```java
 try {
      //启动引擎
-     AzeroManager.getInstance().startEngine(this, config, handlerContainer);
+     AzeroManager.getInstance().startEngine(new SystemRecord(),null,config);
 } catch (RuntimeException e) {
     log.e("Could not start engine. Reason: " + e.getMessage());
 }
@@ -192,32 +179,32 @@ try {
 配合语音交互指令，TemplateRuntimeHandler会下发配套的界面内容，用户可根据自己的需求，渲染界面
 
 ```java
-TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
-templateRuntimeHandler.registerTemplateDispatchedListener(new TemplateDispatcher() {
-    @Override
-    public void renderTemplate(String payload, String type) {
-       //显示模板类界面
-       ......
-    }
+  //各技能回调注册，如asr、navigation
+        List<String> services = new ArrayList<>();
+        services.add(Constant.SKILL.ASR);
+        services.add(Constant.SKILL.NAVIGATION);
+        services.add("renderPlayerInfo");
+        services.add(Constant.SKILL.WEATHERTEMPLATE);
+        services.add("BodyTemplate1");
+        services.add("BodyTemplate2");
 
-	@Override
-    public void renderPlayerInfo(String payload) {
-        //显示播放界面
-    	......
-    }
+        services.add("ListTemplate1");
+        services.add("DefaultTemplate1");
+        services.add("DefaultTemplate2");
+        services.add("DefaultTemplate3");
 
-	@Override
-    public void clearTemplate() {
-        //清理模板类界面
-    	......
-    }
+        services.add("LocalSearchListTemplate1");
 
-	@Override
-    public void clearPlayerInfo() {
-        //清理播放界面
-    	......
-    }
-}
+        services.add("AlertsListTemplate");
+        services.add("AlertRingtoneTemplate");
+        services.add("LauncherTemplate1");
+        //各种技能结果回调
+        AzeroManager.getInstance().registerAzeroExpressCallback(services, mAzeroCallBack);
+
+        //系统状态回调类
+        AzeroManager.getInstance().addAzeroOSListener(new AzeroOSListenerImpl());
+        //各状态回调注册唤醒、开始录音、结束录音等状态，用于更新UI
+        AzeroManager.getInstance().registerUIListener(new UIListenerImpl());
 ```
 
 
@@ -237,10 +224,29 @@ AzeroManager类实现了单例模式，提供如下获取方式
 ### 初始化
 
 ```java
-startEngine(@NotNull Context context,
-            @NotNull Config config,
-            @NotNull HandlerContainer container)
+startEngine(Record record, AbstractOpenDenoise abstractOpenDenoise, ConfigSetting configSetting)
 ```
+
+### 设置UI状态回调
+```java
+registerUIListener(IUIListener iuiListener)
+```
+
+### 移除UI状态回调
+```java
+unRegisterUIListener(IUIListener iuiListener)
+```
+
+### 设置技能回调（包含模版v2.0.0之前版本的template和azeroexpress技能，都是从此接口回调出去）
+```java
+registerAzeroExpressCallback(List<String> services, IAzeroExpressCallback callback)
+```
+
+### 移除技能回调
+```java
+unRegisterAzeroExpressCallback(IAzeroExpressCallback callback)
+```
+
 
 ### 播放控制
 
@@ -391,7 +397,7 @@ public void removeAzeroOSListener(AzeroOSListener listener)
         void resume();
         @Override
         void seekTo(long position);
-
+       
         })
 ```
 
@@ -428,22 +434,16 @@ public void removeAzeroOSListener(AzeroOSListener listener)
 /**
  * 自定义技能模块
  *
- * @param azeroExpress 自定义技能模块的基类
+ * @param IAzeroExpressCallback 自定义技能模块的基类
  * @return 注册是否成功
  */
-public boolean setCustomAgent(@NotNull AzeroExpress azeroExpress)
+public boolean registerAzeroExpressCallback(List<String> services, IAzeroExpressCallback callback)
 
-/**
- * 获取{@link #setCustomAgent(AzeroExpress)}设置的自定义模块
- *
- * @return AzeroExpress实例
- */
-public AzeroExpress getCustomAgent()
 ```
 
 
 
-# 五、Open Denoise
+# 五、Open Denoise（此部分在v2.0.0及之后的版本已经默认在aezro-release.aar内部实现，外部只需要将配置信息按照demo方式放置到assets目录即可）
 
 Azero Sample中默认配置了声智自有的声学算法Open Denoise，支持远场麦克风阵列的降噪、唤醒、AEC等，无需做任何改动即可使用。
 
@@ -495,7 +495,7 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
    		}
    	}
    }
-
+   
    dependencies {
    	implementation name: 'denoise-release', ext: 'aar'
    }
@@ -505,7 +505,7 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
 
 3. #### 相关配置文件
 
-   将SoundAI 提供的配置文件放置在app/src/main/assets/sai_config文件下，并参考demo工程中copy配置文件代码将配置文件拷贝到应用目录。
+   将SoundAI 提供的配置文件放置在app/src/main/assets/config_s文件下，并参考demo工程中copy配置文件代码将配置文件拷贝到应用目录。
 
 4. #### 获取算法SaiClient实例
 
@@ -548,7 +548,7 @@ Open Denoise对原始数据有一定的格式的要求，具体如下：
                    }
    ```
 
-
+   
 
 6. #### 注册回调接口，接受并处理回调事件
 
@@ -578,7 +578,7 @@ saiClient.init(true, configPath, "UUID", key, callback);
 
 ## 问题分析
 
-如声学处理opon denoise 模块使用过程中遇到任何问题需要声智工程师协助分析，请提供如下信息：
+如声学处理open denoise 模块使用过程中遇到任何问题需要声智工程师协助分析，请提供如下信息：
 
 1. issue说明
 2. issue复现步骤
@@ -610,19 +610,13 @@ Basex是SoundAI Azero 附带的基于tinyalsa的开源的多路音频采集工�
 
 在Azero 中我们默认采用Android 标准音频接口作为音频数据来源，同时我们提供了简单的方式去启用Basex:
 
-1. 在AudioInputManager类中初始化BasexRecord对象:
+1. 初始化BasexRecord，放入engine
 
 ```java
-Record systemRecord = new BasexRecord();
+AzeroManager.getInstance().startEngine(new BasexRecord(),null,config);
 ```
 
-2. 将该对象传入:
-
-```java
-openDenoiseManager = new OpenDenoiseManager(context, systemRecord, new OpenDenoiseManager.DenoiseCallback()
-```
-
-3. 开启系统权限：
+2. 开启系统权限：
 
    需要adb shell进入系统shell,执行如下shell命令
 
@@ -668,7 +662,7 @@ tinycap /sdcard/test.pcm -D 0 -d 1 -c 8 -r 48000 -b 32 -p 2048 -n 2
 
    声智远场语音算法对原始音频的通道顺序存在固定要求，因此需要在将原始音频给到算法之前保证其通道顺序是符合要求的，具体要求请参考上一章中声智算法模块通道数据要求。
 
-
+   
 
    下面以环形**6mic 1ref 8ch**设备为例示范，使用Basex具体的调整通道顺序的方法如下
 
@@ -706,7 +700,7 @@ tinycap /sdcard/test.pcm -D 0 -d 1 -c 8 -r 48000 -b 32 -p 2048 -n 2
 
 **1.java.lang.UnsatisfiedLinkError: dlopen failed：library "xxx.so" not found**
 
-**RootCause:**
+**RootCause:** 
 
 使用声智录音工具basex时的一个常见库缺失错误，由于Android安全机制限制，app中无法使用系统Lib库
 

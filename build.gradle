@@ -2,25 +2,21 @@
 ext {
 
     minSdkVersion = 19
-    targetSdkVersion = 26
-    compileSdkVersion = 28
-    appCompatVersion  = '26.1.0'
-    recyclerviewVersion = '26.1.0'
+    targetSdkVersion = 30
+    compileSdkVersion = 30
+    appCompatVersion  = '30.0.2'
+    recyclerviewVersion = '30.0.2'
     // ExoPlayer version and version code.
     exoplayerVersion = '2.10.5'
 }
 buildscript {
 
     repositories {
-       // google()
+        google()
         jcenter()
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -29,15 +25,11 @@ buildscript {
 
 allprojects {
     repositories {
-       // google()
+        google()
         jcenter()
         flatDir {
             dirs 'src/main/libs'
         }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
     }
 }
 

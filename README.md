@@ -60,13 +60,13 @@ Android Studio 3.2及其以上版本
 4）将申请的client id 、product id 填入MyApplication，并传入设备唯一标识，可使用提供的Utils.getimei方法获取设备imei ,如该方法无法获取，则需要自行传入设备唯一标识，其他默认即可。示例如下所示：
 
 ```java
-Config config = new Config(
-                    "",                 //示例，productID 网站申请
-                    "",                 //示例，ClientID  网站申请
-                    Utils.getimei(this),//DeviceSN 传入Mac地址或IMEI号，必须保证设备唯一
-                    Config.SERVER.PRO,//Server 选择使用的服务器  FAT 测试环境 PRO 正式环境
-                    Setting.enableLocalVAD//localVAD  是否使用本地VAD
-            );
+ ConfigSetting config = new ConfigSetting.ConfigBuilder()
+                .setProductID("")
+                .setClientID("")
+                .setServerType(Config.SERVER.PRO)
+                .create();
+
+        AzeroManager.getInstance().startEngine(new SystemRecord(),null,config);
 ```
 
 5）安装app到设备端
@@ -75,7 +75,7 @@ Config config = new Config(
 
 完成上述步骤，即可正常体验Azero 默认功能。
 
-## 体验Azero<a id="test"> </a> 
+## 体验Azero<a id="test"> </a>
 
 经过上述步骤后，可以立刻体验Azero , 主要功能包括：
 
@@ -87,10 +87,10 @@ Config config = new Config(
 **注：部分设备因为系统权限问题，可能需要赋予弹窗（浮窗）权限，否则将无法显示唤醒框；*
        *另外，因为部分设备自身的回声消除效果欠佳，可能存在自体播放声音的情况下无法唤醒的现象，解决此问题，可参看进阶文档，提供回采信号进行回声消除，可以体验到更加效果*
 
-##  更多技能<a id="more_skill"> </a> 
+##  更多技能<a id="more_skill"> </a>
 如需体验更丰富的技能和个性化定制体验，可去 **Azero开放平台 -> 技能商店** 为设备配置更多的官方或者第三方技能，或者按照 [技能接入介绍](https://document-azero.soundai.com.cn/azero/IntroductionToSkillCenter.html) 创建自有技能，实现定制化需求。
 
-## 进阶集成和调优<a id="advanced"> </a> 
+## 进阶集成和调优<a id="advanced"> </a>
 
 完成上述过程，您已经对Azero的语音基本交互过程有了初步体验，如需将Azero SDK集成到您的工程，并针对您的自有设备进行唤醒、识别等语音交互效果的调优请参照进阶文档。
 
@@ -102,12 +102,13 @@ Config config = new Config(
 - Version 1.0.1及其之前版本中Launcher background图片可能会失效，届时您可选择自行替换其背景图片，也可选择试用[补丁](./patch/launcher_backgroud.patch)更新之前图片的新地址。
 - Azero 体验包中视频默认配置了蜜蜂视频App，如需体验视频交互，可以下载[公版蜜蜂视频](http://www.beevideo.tv/apk/bjPQbheOhd8%3D.html)体验；如需产品化，请联系我们获取支持。
 - Version 1.0.2及其之前版本初次安装时，可能无法录音。遇到此问题，给予录音权限之后，需重启下app即可。
+- Version2.0.0及其之后的版本，只需要集成一个azero-release.aar即可，不再需要集成denoise-release.aar.
 
 ## 升级迁移说明<a id="update"> </a>
 
 #### Version 1.6.0
 
-- 升级到1.6.0需要整体替换 azero-release.aar、denoise-release.aar以及全量替换/app/src/main/assets/config（或者config2，如使用SystemRecord）
+- 升级到1.6.0-v2.0.0(不含)需要整体替换 azero-release.aar、denoise-release.aar以及全量替换/app/src/main/assets/config（或者config2，如使用SystemRecord）
 - OpenDenoise的lincenseKey获取方式由AzeroManager.getInstance().generateToken(context)转换为AzeroManager.getInstance().getToken(context)
 
 ## 下载<a id="download"> </a>
