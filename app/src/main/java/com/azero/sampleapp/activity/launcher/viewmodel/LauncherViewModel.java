@@ -15,10 +15,7 @@ package com.azero.sampleapp.activity.launcher.viewmodel;
 
 
 import android.app.Application;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.annotation.NonNull;
+
 
 import com.azero.sampleapp.activity.launcher.LauncherDataManager;
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
@@ -28,6 +25,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 public class LauncherViewModel extends AndroidViewModel {
     private LauncherDataManager launcherDataManager;

@@ -18,11 +18,13 @@ import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
-import androidx.annotation.Nullable;
+
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.azero.sampleapp.R;
+
+import androidx.annotation.Nullable;
 
 public class GradientView extends View {
 

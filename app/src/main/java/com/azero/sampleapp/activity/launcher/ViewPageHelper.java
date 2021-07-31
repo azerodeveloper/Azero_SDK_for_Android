@@ -13,9 +13,11 @@
 
 package com.azero.sampleapp.activity.launcher;
 
-import androidx.viewpager.widget.ViewPager;
+
 
 import java.lang.reflect.Field;
+
+import androidx.viewpager.widget.ViewPager;
 
 public class ViewPageHelper {
     ViewPager viewPager;

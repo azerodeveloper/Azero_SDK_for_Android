@@ -13,11 +13,13 @@
 
 package com.azero.sampleapp.activity.weather.widget;
 import android.content.Context;
-import androidx.viewpager.widget.ViewPager;
+
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 import java.lang.reflect.Field;
+
+import androidx.viewpager.widget.ViewPager;
 
 public class ViewPagerScroller extends Scroller {
     private int mDuration = 400;/*default duration time*/

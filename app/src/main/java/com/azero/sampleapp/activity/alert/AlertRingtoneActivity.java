@@ -15,8 +15,6 @@ package com.azero.sampleapp.activity.alert;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,13 +23,16 @@ import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.template.BaseDisplayCardActivity;
 import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sampleapp.widget.SlidingView;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.Alerts.AlertsHandler;
+import com.azero.sdk.manager.AzeroManager;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class AlertRingtoneActivity extends BaseDisplayCardActivity {
 
@@ -68,7 +69,7 @@ public class AlertRingtoneActivity extends BaseDisplayCardActivity {
         alertClockIcon.setImageResource(R.drawable.soundai_alert_ringtone_clock_icon);
         alertImage.setImageResource(R.drawable.soundai_alert_ringtone_icon_right_n);
 
-        alerts = (AlertsHandler) AzeroManager.getInstance().getHandler(AzeroManager.ALERT_HANDLER);
+        alerts = (AlertsHandler) AzeroManager.getInstance().getHandler(Constant.ALERT_HANDLER);
     }
 
     @Override

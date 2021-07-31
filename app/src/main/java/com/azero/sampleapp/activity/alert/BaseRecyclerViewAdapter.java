@@ -14,7 +14,6 @@
 package com.azero.sampleapp.activity.alert;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,8 @@ import android.view.ViewGroup;
 import com.azero.sdk.util.log;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @Author: sjy

@@ -16,8 +16,6 @@ package com.azero.sampleapp.activity.weather.fragment;
 
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -28,6 +26,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.azero.sampleapp.R;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
 public class WeatherNotSupportFragment extends WeatherFragmentBase {

@@ -13,11 +13,13 @@
 
 package com.azero.sampleapp.activity.weather.widget;
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomRecyclerView extends RecyclerView {
     private int mTouchSlop;

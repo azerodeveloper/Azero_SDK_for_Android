@@ -28,7 +28,8 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="@+id/photo_info_layout"
         app:layout_constraintRight_toRightOf="@+id/photo_info_layout"
-        app:layout_constraintTop_toTopOf="@+id/photo_layout" />
+        app:layout_constraintTop_toTopOf="@+id/photo_layout"
+        tools:ignore="RtlCompat" />
 
     <LinearLayout
         android:id="@+id/photo_info_layout"
@@ -100,7 +101,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/photo_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -121,6 +122,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.Guideline>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

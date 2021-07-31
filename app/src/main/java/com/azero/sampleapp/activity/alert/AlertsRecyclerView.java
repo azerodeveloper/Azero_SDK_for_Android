@@ -16,9 +16,6 @@ package com.azero.sampleapp.activity.alert;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -28,6 +25,10 @@ import android.view.ViewGroup;
 import android.widget.Scroller;
 
 import com.azero.sdk.util.log;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public class AlertsRecyclerView extends RecyclerView {

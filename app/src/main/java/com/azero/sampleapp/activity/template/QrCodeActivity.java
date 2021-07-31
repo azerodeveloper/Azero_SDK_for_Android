@@ -15,8 +15,7 @@ package com.azero.sampleapp.activity.template;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +26,9 @@ import com.azero.sdk.util.log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class QrCodeActivity extends AppCompatActivity {
 

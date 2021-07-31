@@ -24,10 +24,9 @@ import com.azero.sampleapp.manager.ActivityLifecycleManager;
 import com.azero.sampleapp.activity.playerinfo.BasePlayerInfoActivity;
 import com.azero.sampleapp.activity.launcher.LauncherActivity;
 import com.azero.sampleapp.activity.template.BaseTemplateActivity;
-import com.azero.sampleapp.impl.azeroexpress.AzeroExpressInterface;
 import com.azero.sampleapp.util.Utils;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.event.Command;
+import com.azero.sdk.manager.AzeroManager;
 import com.azero.sdk.util.log;
 
 import org.json.JSONException;
@@ -37,7 +36,7 @@ import org.json.JSONObject;
  * 导航模块
  * 执行语音指令"退出"、"返回"、"返回首页"的动作
  */
-public class NavigationHandler implements AzeroExpressInterface {
+public class NavigationHandler{
 
     private Context applicationContext;
 
@@ -45,7 +44,6 @@ public class NavigationHandler implements AzeroExpressInterface {
         applicationContext = context.getApplicationContext();
     }
 
-    @Override
     public void handleDirective(JSONObject expressDirective) {
         try {
             String action = expressDirective.getString("action");

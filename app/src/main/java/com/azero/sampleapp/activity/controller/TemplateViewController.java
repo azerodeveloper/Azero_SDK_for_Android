@@ -15,7 +15,7 @@ package com.azero.sampleapp.activity.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
+
 
 import com.azero.sampleapp.activity.playerinfo.playerpager.PlayerInfoViewPagerActivity;
 import com.azero.sampleapp.activity.weather.WeatherActivity;
@@ -31,6 +31,8 @@ import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
 import org.json.JSONObject;
+
+import androidx.annotation.NonNull;
 
 /**
  * Template类型界面控制

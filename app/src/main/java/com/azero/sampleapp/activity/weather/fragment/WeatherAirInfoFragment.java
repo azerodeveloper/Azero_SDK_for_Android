@@ -15,8 +15,6 @@
 package com.azero.sampleapp.activity.weather.fragment;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +24,9 @@ import android.widget.TextView;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.weather.widget.SquareTextView;
 import com.bumptech.glide.Glide;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class WeatherAirInfoFragment extends WeatherFragmentBase {
     private static final String ARG_WEATHER_INFO = "ARG_WEATHER_INFO";

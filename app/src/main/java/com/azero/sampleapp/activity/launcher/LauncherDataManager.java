@@ -14,8 +14,9 @@
 package com.azero.sampleapp.activity.launcher;
 
 import com.azero.platforms.iface.AlexaClient;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.AzeroClient.AzeroClientHandler;
+import com.azero.sdk.manager.AzeroManager;
+import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
 public class LauncherDataManager implements AzeroClientHandler.ConnectionStatusListener {
@@ -25,7 +26,7 @@ public class LauncherDataManager implements AzeroClientHandler.ConnectionStatusL
 
     public LauncherDataManager() {
         AzeroClientHandler azeroClientHandler = (AzeroClientHandler) AzeroManager.getInstance()
-                .getHandler(AzeroManager.AZERO_CLIENT_HANDLER);
+                .getHandler(Constant.AZERO_CLIENT_HANDLER);
         azeroClientHandler.addConnectionStatusListener(this);
     }
 
@@ -35,7 +36,7 @@ public class LauncherDataManager implements AzeroClientHandler.ConnectionStatusL
 
     public void acquireLauncher(int count) {
         log.d("acquire launcher");
-        AzeroManager.getInstance().acquireLauncherList(AzeroManager.LAUNCHER_ACQUIRE, null, count);
+        AzeroManager.getInstance().acquireLauncherList(Constant.LAUNCHER_ACQUIRE, null, count);
     }
 
     public void updateLauncher(String contentId) {
@@ -44,7 +45,7 @@ public class LauncherDataManager implements AzeroClientHandler.ConnectionStatusL
 
     public void updateLauncher(String contentId, int count) {
         log.d("update launcher");
-        AzeroManager.getInstance().acquireLauncherList(AzeroManager.LAUNCHER_UPDATE, contentId, count);
+        AzeroManager.getInstance().acquireLauncherList(Constant.LAUNCHER_UPDATE, contentId, count);
     }
 
     @Override

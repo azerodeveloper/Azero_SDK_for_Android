@@ -18,13 +18,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.azero.sampleapp.R;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 
-public class SquareTextView extends androidx.appcompat.widget.AppCompatTextView {
+
+public class SquareTextView extends AppCompatTextView {
     private final Paint mThumbPaint = new Paint();
     private final Paint mTrackPaint = new Paint();
     float startAngle = 0f;

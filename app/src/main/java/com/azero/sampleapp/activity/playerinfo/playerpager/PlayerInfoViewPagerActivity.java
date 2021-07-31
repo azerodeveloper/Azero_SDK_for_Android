@@ -15,9 +15,6 @@ package com.azero.sampleapp.activity.playerinfo.playerpager;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,10 +27,12 @@ import com.azero.sampleapp.activity.playerinfo.bean.PushMessage;
 import com.azero.sampleapp.util.DownloadHelper;
 import com.azero.sampleapp.util.FileUtils;
 import com.azero.sampleapp.util.GlideManager;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
 import com.azero.sdk.impl.TemplateRuntime.TemplateDispatcher;
 import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
+import com.azero.sdk.interfa.IAzeroExpressCallback;
+import com.azero.sdk.manager.AzeroManager;
+import com.azero.sdk.manager.AzeroManagerImpl;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
@@ -43,9 +42,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -68,6 +72,21 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
     private static final int EXTERNAL_STORAGE_REQ_CODE = 101;
     private CompositeDisposable compositeDisposable;
 
+    private IAzeroExpressCallback mAZeroCallback =  new IAzeroExpressCallback() {
+        @Override
+        public void handleExpressDirective(String type, String payload) {
+            log.d("handleExpressDirective: type:" + type + ", payload: " + payload);
+            try {
+                if ("renderPlayerInfo".equals(type)) {
+                    PushMessage pushMessage = new PushMessage(PushMessage.UPDATE_PLAYERINFO);
+                    pushMessage.setPayload(payload);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    };
+
     @Override
     protected int getLayoutResId() {
         return R.layout.card_audio_main_template;
@@ -85,11 +104,13 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         requestPermission();
         initViewPager();
         initMediaState();
-        registerTemplate();
+        //registerTemplate();
         mBtnBack.setOnClickListener(this);
         compositeDisposable = new CompositeDisposable();
         GlideManager.loadImgWithBlur(this, R.drawable.img_default, ivBg);
     }
+
+
 
     private void requestPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -126,28 +147,35 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
     }
 
     private void registerTemplate() {
-        templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
-        templateDispatcher = new TemplateDispatcher() {
-            @Override
-            public void renderTemplate(String payload, String type) {
-                super.renderTemplate(payload, type);
-                log.e("registerTemplateDispatchedListener renderTemplate" + payload + "  type=" + type);
-            }
+        //各技能回调注册，如asr、navigation
+        List<String> services = new ArrayList<>();
+        services.add("renderPlayerInfo");
+        AzeroManager.getInstance().registerAzeroExpressCallback(services,mAZeroCallback);
 
-            @Override
-            public void renderPlayerInfo(String payload) {
-                log.e("registerTemplateDispatchedListener");
-                PushMessage pushMessage = new PushMessage(PushMessage.UPDATE_PLAYERINFO);
-                pushMessage.setPayload(payload);
-                EventBus.getDefault().post(pushMessage);
-            }
-        };
 
-        templateRuntimeHandler.registerTemplateDispatchedListener(templateDispatcher);
+
+//        templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(Constant.TEMPLATE_HANDLER);
+//        templateDispatcher = new TemplateDispatcher() {
+//            @Override
+//            public void renderTemplate(String payload, String type) {
+//                super.renderTemplate(payload, type);
+//                log.e("registerTemplateDispatchedListener renderTemplate" + payload + "  type=" + type);
+//            }
+//
+//            @Override
+//            public void renderPlayerInfo(String payload) {
+//                log.e("registerTemplateDispatchedListener");
+//                PushMessage pushMessage = new PushMessage(PushMessage.UPDATE_PLAYERINFO);
+//                pushMessage.setPayload(payload);
+//                //EventBus.getDefault().post(pushMessage);
+//            }
+//        };
+//
+//        templateRuntimeHandler.registerTemplateDispatchedListener(templateDispatcher);
     }
 
     private void initMediaState() {
-        mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(Constant.AUDIO_HANDLER);
         log.e("v: " + mMediaPlayer.toString());
         mediaStateChangeListener = new MediaPlayer.OnMediaStateChangeListener() {
             @Override
@@ -158,7 +186,6 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
             @Override
             public void onMediaStateChange(String playerName, MediaPlayer.MediaState mediaState) {
                 log.d("onMediaStateChange*********" + mediaState);
-                EventBus.getDefault().post(mediaState);
                 if (mediaState.equals(MediaPlayer.MediaState.BUFFERING)) {
                     PushMessage pushMessage = new PushMessage(PushMessage.MEDIASTATE_PLAYING);
                     pushMessage.setFile(lyricFile);
@@ -168,6 +195,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
 
             @Override
             public void onPositionChange(String playerName, long position, long duration) {
+                log.d(" onPositionChange playerName===>"+playerName+",   position===>"+position+",   duration===>"+duration);
                 PushMessage pushMessage = new PushMessage(PushMessage.UPDATE_PROGRESS);
                 pushMessage.setPosition(position);
                 EventBus.getDefault().post(pushMessage);
@@ -175,6 +203,14 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         };
         mMediaPlayer.addOnMediaStateChangeListener(mediaStateChangeListener);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerTemplate();
+    }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -201,6 +237,12 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
             mHeader.setText(title);
             autoShowLyric();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AzeroManager.getInstance().unRegisterAzeroExpressCallback(mAZeroCallback);
     }
 
     /**
@@ -339,9 +381,9 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
         if (pushMessage != null) {
             EventBus.getDefault().removeStickyEvent(pushMessage);
         }
-        if (templateRuntimeHandler != null && templateDispatcher != null) {
-            templateRuntimeHandler.unregisterTemplateDispatchedListener(templateDispatcher);
-        }
+//        if (templateRuntimeHandler != null && templateDispatcher != null) {
+//            templateRuntimeHandler.unregisterTemplateDispatchedListener(templateDispatcher);
+//        }
         if (mMediaPlayer != null && mediaStateChangeListener != null) {
             mMediaPlayer.removeOnMediaStateChangeListener(mediaStateChangeListener);
         }

@@ -16,21 +16,17 @@ package com.azero.sampleapp.activity.playerinfo.news;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.azero.platforms.iface.MediaPlayer;
-import com.azero.sampleapp.MyApplication;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.playerinfo.BasePlayerInfoActivity;
 import com.azero.sampleapp.activity.playerinfo.news.bean.NewsInfo;
 import com.azero.sampleapp.activity.template.ConfigureTemplateView;
 import com.azero.sampleapp.util.DisplayUtils;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.event.Command;
 import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
+import com.azero.sdk.manager.AzeroManager;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
@@ -40,6 +36,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NewsActivity extends BasePlayerInfoActivity {
     private List<NewsInfo> mDataList = new ArrayList<>();
@@ -96,11 +96,11 @@ public class NewsActivity extends BasePlayerInfoActivity {
                 if (targetView == null) return;
                 int position = recyclerView.getChildAdapterPosition(
                         mSnapHelper.findSnapView(recyclerView.getLayoutManager()));
-                if (!MyApplication.getInstance().isAudioInputting &&
-                        ((!mOperateQueue.isEmpty() && mOperateQueue.get(mOperateQueue.size() - 1) != position) || mTargetPosition != position)) {
-                    AzeroManager.sendQueryText("播放第" + (position + 1) + "个");
-                    mOperateQueue.add(position);
-                }
+//                if (!MyApplication.getInstance().isAudioInputting &&
+//                        ((!mOperateQueue.isEmpty() && mOperateQueue.get(mOperateQueue.size() - 1) != position) || mTargetPosition != position)) {
+//                    AzeroManager.sendQueryText("播放第" + (position + 1) + "个");
+//                    mOperateQueue.add(position);
+//                }
             }
         });
 
@@ -132,7 +132,7 @@ public class NewsActivity extends BasePlayerInfoActivity {
         }
 
         ;
-        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(Constant.AUDIO_HANDLER);
         mediaPlayerHandler.addOnMediaStateChangeListener(mMediaStateChangeListener);
     }
 
@@ -165,7 +165,7 @@ public class NewsActivity extends BasePlayerInfoActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        MediaPlayerHandler mediaPlayerHandler = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(Constant.AUDIO_HANDLER);
         mediaPlayerHandler.removeOnMediaStateChangeListener(mMediaStateChangeListener);
     }
 

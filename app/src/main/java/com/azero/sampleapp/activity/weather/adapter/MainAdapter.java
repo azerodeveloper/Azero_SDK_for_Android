@@ -14,13 +14,14 @@ specific language governing permissions and limitations under the License.
 */
 
 
+import android.view.View;
+
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import android.view.View;
-
-import java.util.List;
 
 public class MainAdapter extends FragmentStatePagerAdapter {
     List<Fragment> mList;

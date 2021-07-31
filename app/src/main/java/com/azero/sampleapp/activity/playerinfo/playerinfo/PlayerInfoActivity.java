@@ -14,6 +14,7 @@
 package com.azero.sampleapp.activity.playerinfo.playerinfo;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -23,17 +24,20 @@ import com.azero.platforms.iface.MediaPlayer;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.activity.playerinfo.BasePlayerInfoActivity;
 import com.azero.sampleapp.activity.template.ConfigureTemplateView;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.event.Command;
 import com.azero.sdk.impl.MediaPlayer.MediaPlayerHandler;
 import com.azero.sdk.impl.TemplateRuntime.TemplateDispatcher;
-import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
+import com.azero.sdk.interfa.IAzeroExpressCallback;
+import com.azero.sdk.manager.AzeroManager;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.azero.sampleapp.util.Utils.stringForTime;
 
@@ -52,6 +56,19 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
 
     private MediaPlayer.OnMediaStateChangeListener mMediaStateChangeListener;
     private TemplateDispatcher mTemplateDispatcher;
+
+    private IAzeroExpressCallback mAzeroCallback = new IAzeroExpressCallback() {
+        @Override
+        public void handleExpressDirective(String s, String s1) {
+            runOnUiThread(() -> {
+                try {
+                    executeRenderPlayerInfo(s1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    };
 
     @Override
     protected int getLayoutResId() {
@@ -84,6 +101,19 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
         start();
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerListeners();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterListeners();
+    }
+
     @Override
     protected void initData(Intent intent) {
         try {
@@ -104,6 +134,7 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
 
             @Override
             public void onMediaStateChange(String playerName, MediaPlayer.MediaState mediaState) {
+                log.d("onMediaStateChange: playerName===>"+playerName+",     mediaState===>"+mediaState);
                 switch (mediaState) {
                     case STOPPED:
                         runOnUiThread(() -> stop());
@@ -118,6 +149,7 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
 
             @Override
             public void onPositionChange(String playerName, long position, long duration) {
+                log.d("playerName===>"+playerName+",   position===>"+position+",   duration===>"+duration);
                 long pos = 0;
                 if (duration != 0) {
                     pos = 1000L * position / duration;
@@ -127,7 +159,7 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
                 mProgressTime.setText(stringForTime((int) position));
             }
         };
-        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
+        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(Constant.AUDIO_HANDLER);
         mMediaPlayer.addOnMediaStateChangeListener(mMediaStateChangeListener);
 
         mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -161,33 +193,37 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
             }
         });
 
-        mTemplateDispatcher = new TemplateDispatcher() {
-            @Override
-            public void renderPlayerInfo(String payload) {
-                runOnUiThread(() -> {
-                    try {
-                        executeRenderPlayerInfo(payload);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-        };
-        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
-        templateRuntimeHandler.registerTemplateDispatchedListener(mTemplateDispatcher);
+//        mTemplateDispatcher = new TemplateDispatcher() {
+//            @Override
+//            public void renderPlayerInfo(String payload) {
+//                runOnUiThread(() -> {
+//                    try {
+//                        executeRenderPlayerInfo(payload);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+//            }
+//        };
+//        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(Constant.TEMPLATE_HANDLER);
+//        templateRuntimeHandler.registerTemplateDispatchedListener(mTemplateDispatcher);
+        List<String> services = new ArrayList<>();
+        services.add("renderPlayerInfo");
+        AzeroManager.getInstance().registerAzeroExpressCallback(services,mAzeroCallback);
     }
 
     private void unregisterListeners() {
-        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(AzeroManager.AUDIO_HANDLER);
-        TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
+        MediaPlayerHandler mMediaPlayer = (MediaPlayerHandler) AzeroManager.getInstance().getHandler(Constant.AUDIO_HANDLER);
+        //TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(Constant.TEMPLATE_HANDLER);
         mMediaPlayer.removeOnMediaStateChangeListener(mMediaStateChangeListener);
-        templateRuntimeHandler.unregisterTemplateDispatchedListener(mTemplateDispatcher);
+        //templateRuntimeHandler.unregisterTemplateDispatchedListener(mTemplateDispatcher);
+        AzeroManager.getInstance().unRegisterAzeroExpressCallback(mAzeroCallback);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterListeners();
+        //unregisterListeners();
     }
 
     private void executeRenderPlayerInfo(String payload) throws JSONException {

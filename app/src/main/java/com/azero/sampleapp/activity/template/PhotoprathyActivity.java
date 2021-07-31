@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.azero.sampleapp.R;
-import com.azero.sampleapp.activity.template.BaseDisplayCardActivity;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 import com.bumptech.glide.Glide;

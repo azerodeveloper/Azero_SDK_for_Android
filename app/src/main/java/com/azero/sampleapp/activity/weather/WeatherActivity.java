@@ -17,8 +17,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,14 +37,18 @@ import com.azero.sampleapp.activity.weather.fragment.WeatherNowInfoFragment;
 import com.azero.sampleapp.activity.weather.fragment.WeatherSuggestFragment;
 import com.azero.sampleapp.activity.weather.widget.ViewPagerScroller;
 import com.azero.sampleapp.util.DateUtils;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.TemplateRuntime.TemplateRuntimeHandler;
+import com.azero.sdk.manager.AzeroManager;
+import com.azero.sdk.util.Constant;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.util.CollectionUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 
 public class WeatherActivity extends BaseDisplayCardActivity implements WeatherFragmentInterface {
@@ -272,14 +274,14 @@ public class WeatherActivity extends BaseDisplayCardActivity implements WeatherF
 
                     }
                     removeMessages(MESSAGE_DELAY_RECLOCK_TEMPLATE_TIMER);
-                    TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
+                    TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(Constant.TEMPLATE_HANDLER);
                     templateRuntimeHandler.reclockTemplateTimer();
                 }
                 break;
 
                 case MESSAGE_DELAY_RECLOCK_TEMPLATE_TIMER: {
                     removeMessages(MESSAGE_DELAY_RECLOCK_TEMPLATE_TIMER);
-                    TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(AzeroManager.TEMPLATE_HANDLER);
+                    TemplateRuntimeHandler templateRuntimeHandler = (TemplateRuntimeHandler) AzeroManager.getInstance().getHandler(Constant.TEMPLATE_HANDLER);
                     templateRuntimeHandler.reclockTemplateTimer();
                 }
                 break;

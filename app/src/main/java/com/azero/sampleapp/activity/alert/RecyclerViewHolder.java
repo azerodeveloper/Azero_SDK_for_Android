@@ -13,9 +13,11 @@
 
 package com.azero.sampleapp.activity.alert;
 
-import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.SparseArray;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @Author: sjy

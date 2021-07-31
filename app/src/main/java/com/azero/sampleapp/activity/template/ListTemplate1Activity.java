@@ -14,7 +14,6 @@
 package com.azero.sampleapp.activity.template;
 
 import android.content.Intent;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +25,8 @@ import com.azero.sdk.util.log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class ListTemplate1Activity extends BaseDisplayCardActivity{
     private TextView mMainTitle;

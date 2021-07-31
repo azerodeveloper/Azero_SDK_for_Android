@@ -14,7 +14,6 @@
 package com.azero.sampleapp.activity.template;
 
 import android.content.Intent;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +24,8 @@ import com.azero.sdk.util.log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class BodyTemplate2Activity extends BaseDisplayCardActivity{
     private TextView mMainTitle;

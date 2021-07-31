@@ -23,7 +23,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
+
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +34,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.azero.sampleapp.R;
+
+import androidx.annotation.NonNull;
 
 /**
  * Description:

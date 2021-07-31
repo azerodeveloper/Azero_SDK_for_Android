@@ -13,13 +13,8 @@
 
 package com.azero.sampleapp.activity.launcher.db;
 
-import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
 
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
 import com.azero.sampleapp.activity.launcher.recommendation.RecommendationDao;
@@ -27,6 +22,12 @@ import com.azero.sdk.util.log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {Recommendation.class}, version = 1, exportSchema = false)
 public abstract class LauncherDatabase extends RoomDatabase {

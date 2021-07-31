@@ -15,8 +15,7 @@ package com.azero.sampleapp.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.UiThread;
-import androidx.appcompat.widget.AppCompatTextView;
+
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -26,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.UiThread;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * 高亮显示语音播报文字控件

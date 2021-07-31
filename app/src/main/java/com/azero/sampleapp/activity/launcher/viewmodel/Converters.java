@@ -13,9 +13,11 @@
 
 package com.azero.sampleapp.activity.launcher.viewmodel;
 
-import androidx.room.TypeConverter;
+
 
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
+
+import androidx.room.TypeConverter;
 
 public class Converters {
     @TypeConverter

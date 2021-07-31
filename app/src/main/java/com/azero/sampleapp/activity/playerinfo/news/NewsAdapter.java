@@ -13,9 +13,6 @@
 
 package com.azero.sampleapp.activity.playerinfo.news;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +24,10 @@ import com.azero.sampleapp.activity.playerinfo.news.bean.NewsInfo;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private List<NewsInfo> mDataList;

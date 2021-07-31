@@ -13,10 +13,7 @@
 
 package com.azero.sampleapp.activity.launcher;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+
 
 import com.azero.sampleapp.activity.launcher.recommendation.Recommendation;
 import com.azero.sampleapp.activity.launcher.recommendation.RecommendationFragment;
@@ -24,6 +21,11 @@ import com.azero.sdk.util.log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 
 /**
@@ -95,7 +97,8 @@ public abstract class LoopFragmentPagerAdapter extends FragmentStatePagerAdapter
 
     private void sortData(List<Recommendation> recommendations) {
         fragments.clear();
-        for (Recommendation recommendation : recommendations) {
+        for (int i = 0;i<recommendations.size();i++){
+            Recommendation recommendation = recommendations.get(i);
             RecommendationFragment recommendationFragment = RecommendationFragment.newInstance(recommendation);
             fragments.add(recommendationFragment);
         }

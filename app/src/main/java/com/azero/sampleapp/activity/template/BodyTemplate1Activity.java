@@ -14,7 +14,6 @@
 package com.azero.sampleapp.activity.template;
 
 import android.content.Intent;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -22,13 +21,15 @@ import com.azero.platforms.iface.MediaPlayer;
 import com.azero.platforms.iface.MediaPlayer.MediaState;
 import com.azero.sampleapp.R;
 import com.azero.sampleapp.widget.HighlightTextView;
-import com.azero.sdk.AzeroManager;
 import com.azero.sdk.impl.MediaPlayer.RawSpeakAudioMediaPlayerHandler;
+import com.azero.sdk.manager.AzeroManager;
 import com.azero.sdk.util.Constant;
 import com.azero.sdk.util.log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class BodyTemplate1Activity extends BaseDisplayCardActivity implements MediaPlayer.OnMediaStateChangeListener {
     private TextView mMainTitle;
@@ -63,7 +64,7 @@ public class BodyTemplate1Activity extends BaseDisplayCardActivity implements Me
         }
 
         RawSpeakAudioMediaPlayerHandler speaker = (RawSpeakAudioMediaPlayerHandler)
-                AzeroManager.getInstance().getHandler(AzeroManager.SPEAKER_HANDLER);
+                AzeroManager.getInstance().getHandler(Constant.SPEAKER_HANDLER);
         speaker.addOnMediaStateChangeListener(this);
         mTextField.setOnHighlightChangeListener((view, line, offset) -> {
             if (offset > (mScrollView.getHeight() / 2 - 80)) {
@@ -79,7 +80,7 @@ public class BodyTemplate1Activity extends BaseDisplayCardActivity implements Me
     protected void onPause() {
         super.onPause();
         RawSpeakAudioMediaPlayerHandler speaker = (RawSpeakAudioMediaPlayerHandler)
-                AzeroManager.getInstance().getHandler(AzeroManager.SPEAKER_HANDLER);
+                AzeroManager.getInstance().getHandler(Constant.SPEAKER_HANDLER);
         speaker.removeOnMediaStateChangeListener(this);
     }
 

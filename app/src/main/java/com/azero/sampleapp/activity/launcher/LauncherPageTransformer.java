@@ -13,12 +13,14 @@
 
 package com.azero.sampleapp.activity.launcher;
 
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
+
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.azero.sampleapp.R;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 
 
 /**

@@ -13,14 +13,16 @@
 
 package com.azero.sampleapp.activity.launcher.recommendation;
 
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.azero.sampleapp.activity.launcher.viewmodel.Converters;
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 /**
  * Description:
