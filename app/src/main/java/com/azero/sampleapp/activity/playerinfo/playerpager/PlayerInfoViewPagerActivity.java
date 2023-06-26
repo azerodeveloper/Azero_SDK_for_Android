@@ -74,7 +74,7 @@ public class PlayerInfoViewPagerActivity extends BasePlayerInfoActivity implemen
 
     private IAzeroExpressCallback mAZeroCallback =  new IAzeroExpressCallback() {
         @Override
-        public void handleExpressDirective(String type, String payload) {
+        public void handleExpressDirective(String messageId,String type, String payload) {
             log.d("handleExpressDirective: type:" + type + ", payload: " + payload);
             try {
                 if ("renderPlayerInfo".equals(type)) {
