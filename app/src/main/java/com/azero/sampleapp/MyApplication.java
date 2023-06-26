@@ -39,8 +39,8 @@ public class MyApplication extends BaseApplication{
     public void initAzero() throws RuntimeException {
 
         ConfigSetting config = new ConfigSetting.ConfigBuilder()
-                .setProductID("")
-                .setClientID("")
+                .setProductID("speaker_azero_test")
+                .setClientID("5da580abda66010006f7e6c4")
                 .setServerType(Config.SERVER.PRO)
                 .create();
 

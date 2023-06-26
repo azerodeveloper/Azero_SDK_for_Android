@@ -59,7 +59,7 @@ public class PlayerInfoActivity extends BasePlayerInfoActivity {
 
     private IAzeroExpressCallback mAzeroCallback = new IAzeroExpressCallback() {
         @Override
-        public void handleExpressDirective(String s, String s1) {
+        public void handleExpressDirective(String messageId,String s, String s1) {
             runOnUiThread(() -> {
                 try {
                     executeRenderPlayerInfo(s1);

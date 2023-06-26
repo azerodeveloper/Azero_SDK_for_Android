@@ -78,7 +78,7 @@ public class LauncherActivity extends AppCompatActivity implements AzeroOSListen
 
     private IAzeroExpressCallback mAzeroCallBack = new IAzeroExpressCallback() {
         @Override
-        public void handleExpressDirective(String type, String payload) {
+        public void handleExpressDirective(String messageId,String type, String payload) {
             Log.d(TAG, "handleExpressDirective: type:" + type + ", payload: " + payload);
             try {
                 JSONObject template = new JSONObject(payload);
